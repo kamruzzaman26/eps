@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Metadata Studio - EPS</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#eef2ff 0,#f6f8fb 260px);color:#172033}
+.container{max-width:900px;margin:auto;padding:0 14px 40px}
+.header{margin:0 -14px 16px;padding:26px 20px 28px;background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);color:#fff;display:flex;gap:14px;align-items:center;border-radius:0 0 26px 26px;box-shadow:0 10px 30px rgba(30,58,138,.25)}
+.logo{width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:28px;flex:none}
+.header h1{margin:0 0 4px;font-size:25px;letter-spacing:-.3px}
+.header p{margin:0;opacity:.8;font-size:14px}
+.panel{background:#fff;border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:0 8px 28px rgba(15,23,42,.08);border:1px solid #e8edf5}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px}
+.csvImportBtn{display:block;width:100%;text-align:center;background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 6px 16px rgba(124,58,237,.25);font-size:16px;padding:15px;margin-top:10px}
+.csvImportHelp{font-size:12px;line-height:1.6;color:#64748b;margin:8px 2px 0}
+.csvImportStatus{margin-top:10px;padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid #dbe4f0;font-size:13px;line-height:1.6;color:#475569}
+.csvImportStatus.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.csvImportStatus.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+.batchPanel{margin-top:12px;padding:14px;border:1px solid #bfdbfe;border-radius:16px;background:#eff6ff}.batchPanel h3{margin:0 0 6px;font-size:16px}.batchControls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}.batchList{background:#fff;border:1px solid #dbe4f0;border-radius:12px;padding:10px;max-height:220px;overflow:auto;font-size:13px;line-height:1.7;overflow-wrap:anywhere}.batchPanel button{width:100%;margin-top:0}.batchWorkflowButtons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.batchWorkflowButtons button{min-height:64px;padding:10px 7px;font-size:13px;white-space:normal}.batchWorkflowButtons button.done{background:linear-gradient(135deg,#047857,#10b981);outline:2px solid #a7f3d0}@media(max-width:520px){.batchWorkflowButtons{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.batchWorkflowButtons button{font-size:11px;padding:9px 4px;min-height:68px}}.batchPanel select{background:#fff}.mainActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,auto));gap:10px;margin-top:12px}
+.mainActions button{width:100%;min-height:54px}
+@media(max-width:650px){.mainActions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.mainActions button{min-height:50px;padding:11px 6px;font-size:12px}}
+button,.uploadBtn{border:0;border-radius:14px;padding:13px 18px;font-weight:700;cursor:pointer;font-size:15px;color:#fff;font-family:inherit;transition:transform .12s,box-shadow .12s}
+button:active,.uploadBtn:active{transform:scale(.97)}
+.uploadBtn{display:block;width:100%;text-align:center;background:linear-gradient(135deg,#2563eb,#3b82f6);box-shadow:0 6px 16px rgba(37,99,235,.35);font-size:17px;padding:16px}
+.btn-analyze{background:linear-gradient(135deg,#1d4ed8,#4f46e5);box-shadow:0 6px 16px rgba(79,70,229,.3)}
+.btn-green{background:linear-gradient(135deg,#059669,#10b981);box-shadow:0 6px 16px rgba(16,185,129,.3)}
+.btn-slate{background:#475569}
+.btn-light{background:#eef2f7;color:#172033}
+button.danger{background:linear-gradient(135deg,#dc2626,#ef4444)}
+input[type=file]{display:none}
+.ai{margin-top:14px;font-size:12px;color:#64748b}
+.bar{height:6px;background:#e2e8f0;border-radius:6px;overflow:hidden;margin-top:8px}
+.bar div{height:100%;width:0;background:linear-gradient(90deg,#3b82f6,#10b981);transition:width .3s}
+.banner{background:#fff;border:1px solid #e8edf5;border-radius:16px;padding:14px 16px;margin-bottom:14px;font-size:15px;font-weight:600;color:#475569;box-shadow:0 4px 14px rgba(15,23,42,.05)}
+.banner.ok{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+.banner.run{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.workflow{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px;font-size:13px;line-height:1.8;border:1px solid #e8edf5;color:#475569}
+.workflow b{color:#172033}
+.card{background:#fff;border-radius:22px;padding:16px;margin-bottom:16px;box-shadow:0 8px 28px rgba(15,23,42,.08);border:1px solid #e8edf5}
+.cardTop{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.linkRow{display:flex;gap:8px;margin-top:12px;align-items:stretch}
+.linkRow input[type=text]{flex:1;min-width:0;padding:10px 12px;font-size:13px;border-radius:12px}
+.smallBtn{flex:none;padding:10px 14px;font-size:13px;border-radius:12px;background:linear-gradient(135deg,#0f766e,#14b8a6);box-shadow:0 4px 12px rgba(20,184,166,.3)}
+.dlBtn{display:block;width:100%;margin-top:12px;padding:13px;font-size:15px;border-radius:14px;background:linear-gradient(135deg,#0f766e,#14b8a6);box-shadow:0 6px 16px rgba(20,184,166,.3);transition:all .18s ease}.dlBtn.copied{background:linear-gradient(135deg,#15803d,#22c55e);box-shadow:0 6px 16px rgba(34,197,94,.3);transform:scale(.99)}
+.simBtn{display:block;width:100%;margin-top:14px;padding:17px;font-size:17px;border-radius:16px;background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 8px 20px rgba(124,58,237,.35)}
+.serial{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-size:13px;font-weight:800;min-width:38px;text-align:center;padding:5px 10px;border-radius:999px;flex:none}
+.badge{background:#172033;color:#fff;font-size:11px;font-weight:800;letter-spacing:.8px;padding:5px 10px;border-radius:999px;flex:none}
+.fname{font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview{min-height:190px;border-radius:16px;background-color:#f8fafc;background-image:linear-gradient(45deg,#eef2f7 25%,transparent 25%),linear-gradient(-45deg,#eef2f7 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef2f7 75%),linear-gradient(-45deg,transparent 75%,#eef2f7 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.preview img,.preview canvas{max-width:100%;max-height:360px;display:block}
+.fileBox{text-align:center;padding:30px;background:rgba(255,255,255,.9);border-radius:14px;margin:10px}
+.fileIcon{font-size:50px;margin-bottom:8px}
+.status{font-size:13px;margin:12px 0 4px;color:#64748b;font-weight:600}
+.success{color:#059669}.warning{color:#b45309}.danger-t{color:#b42318}
+.field{margin-top:14px}
+.field label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;color:#64748b;text-transform:uppercase;letter-spacing:.6px}
+input[type=text],textarea,select{width:100%;border:1.5px solid #dbe3ee;border-radius:14px;padding:12px 14px;font-size:15px;font-family:inherit;background:#fbfcfe;color:#172033}
+input[type=text]:focus,textarea:focus,select:focus{outline:0;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+textarea{min-height:86px;resize:vertical}
+.keywords{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.keyword{background:#eef2f7;padding:7px 12px;border-radius:999px;font-size:12px;color:#334155}
+.keyword.top{background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:#fff;font-weight:600}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.counter{font-size:12px;color:#94a3b8;margin-top:6px}
+.risk{margin-top:14px;padding:12px 14px;border-radius:14px;font-size:13px;line-height:1.55}
+.risk.ok{background:#ecfdf5;color:#047857}
+.risk.mid{background:#fffbeb;color:#b45309}
+.risk.high{background:#fef2f2;color:#b91c1c}
+.note{font-size:12px;line-height:1.7;color:#94a3b8;padding:0 6px}
+.header{position:relative}
+.menuBtn{position:absolute;top:12px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:26px;line-height:1;cursor:pointer;padding:0}
+.menuBtn .dot{display:none;position:absolute;top:6px;right:6px;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid #1e3a8a}
+
+.menuBtn.on .dot{display:block}
+.headerDownBtn{position:absolute;top:58px;right:14px;z-index:101;width:42px;height:42px;padding:0;border:0;border-radius:50%;background:#fff;color:#172033;font-size:18px;font-weight:900;line-height:42px;text-align:center;box-shadow:0 6px 18px rgba(15,23,42,.25);cursor:pointer}
+.headerDownBtn:active{transform:scale(.94)}
+@media(max-width:600px){.headerDownBtn{top:56px;right:12px;width:40px;height:40px;line-height:40px;font-size:17px}}
+.menuBox{display:none;position:absolute;top:58px;right:14px;width:min(320px,calc(100vw - 28px));background:#fff;color:#172033;border-radius:16px;padding:14px;box-shadow:0 12px 36px rgba(15,23,42,.3);z-index:50}
+.menuBox.open{display:block}
+.adobeReady{margin-top:12px;padding:14px;border-radius:16px;border:1px solid #bbf7d0;background:#f0fdf4;color:#166534;display:none}.adobeReady.show{display:block}.adobeReady strong{display:block;font-size:15px;margin-bottom:5px}.adobeReady button{margin-top:9px}.adobeReady a{color:inherit;text-decoration:none}
+.csvPreviewPanel{margin-top:12px;border:1px solid #dbe4f0;border-radius:18px;padding:14px;background:#f8fafc}
+.csvPreviewPanel h3{margin:0 0 5px;font-size:16px;color:#172033}
+.csvPreviewWrap{overflow:auto;max-height:360px;border:1px solid #dbe4f0;border-radius:12px;background:#fff;margin-top:10px}
+.csvPreviewTable{width:100%;border-collapse:collapse;min-width:760px;font-size:12px}
+.csvPreviewTable th{position:sticky;top:0;background:#eef3f8;color:#334155;text-align:left;padding:9px;border-bottom:1px solid #dbe4f0;z-index:1}
+.csvPreviewTable td{padding:8px 9px;border-bottom:1px solid #edf1f5;vertical-align:top;line-height:1.45}
+.csvPreviewTable td:first-child{white-space:nowrap;font-weight:700}
+.csvPreviewTable .csvKw{max-width:390px;white-space:normal}
+.csvPreviewEmpty{padding:14px;color:#64748b;font-size:13px}
+.adobeValidator{margin-top:14px;border:1px solid #dbe4f0;border-radius:18px;padding:14px;background:#f8fafc}
+.adobeValidator h3{margin:0 0 6px;font-size:16px;color:#172033}
+.validatorSummary{font-size:13px;line-height:1.6;margin:8px 0}
+.validatorList{margin:8px 0 0;padding-left:20px;font-size:12px;line-height:1.65}
+.validatorGood{color:#047857}
+.validatorWarn{color:#b45309}
+.validatorBad{color:#b91c1c}
+.validatorMeta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.validatorPill{padding:7px 10px;border-radius:999px;background:#e8eef7;color:#334155;font-size:12px;font-weight:700}
+
+.menuBox input{width:100%;margin-bottom:8px}
+.menuBox .mrow{display:flex;gap:8px;margin-bottom:6px}
+
+.quickTools{margin:12px 0;border:1px solid #dbe4f0;border-radius:18px;padding:12px;background:#f8fafc}
+.quickToolsTitle{font-size:15px;font-weight:800;color:#172033;margin-bottom:9px}
+.quickToolsGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:650px){.quickToolsGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.quickToolBtn{font-size:11px;min-height:42px;padding:7px 5px}}
+.quickToolBtn{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 10px;border:1px solid #dbe4f0;border-radius:11px;background:#fff;color:#172033;text-decoration:none;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.quickToolBtn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(15,23,42,.08);background:#f1f5f9}
+.quickToolBtn small{font-size:10px;font-weight:500;color:#64748b}
+
+
+.aiPastePanel{margin:12px 0;border:1px solid #bfdbfe;border-radius:18px;padding:14px;background:linear-gradient(180deg,#eff6ff,#f8fafc)}
+.aiPasteTitle{font-size:16px;font-weight:800;color:#172033;margin-bottom:5px}
+.aiPasteHelp{font-size:12px;color:#475569;line-height:1.55;margin-bottom:10px}
+.aiPrompt{width:100%;min-height:145px;resize:vertical;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:12px;padding:10px;background:#fff;color:#172033;font:13px/1.5 monospace}
+.aiPasteRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.aiPasteStatus{margin-top:9px;padding:9px 11px;border-radius:10px;background:#fff;border:1px solid #dbe4f0;font-size:12px;color:#475569}
+.aiPasteStatus.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.aiPasteStatus.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+@media(max-width:650px){.aiPasteRow>*{flex:1 1 100%}}
+
+.aiStepBox{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+.aiStep{background:#f8fafc;border:1px solid #dbe4f0;border-radius:12px;padding:11px;font-size:13px;line-height:1.5}
+.aiStep span{color:#475569}
+@media(max-width:760px){.aiStepBox{grid-template-columns:1fr}}
+
+/* Floating page scroll controls */
+.scrollControls{position:fixed;right:14px;bottom:18px;z-index:100;display:flex;flex-direction:column;gap:8px;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;transform:translateY(8px)}
+.scrollControls.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.scrollControls button{min-width:78px;height:42px;border:0;border-radius:12px;background:#172033;color:#fff;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(15,23,42,.25);cursor:pointer;padding:0 12px}
+.scrollControls button:active{transform:scale(.94)}
+@media(max-width:600px){.scrollControls{right:10px;bottom:12px}.scrollControls button{min-width:72px;height:40px;padding:0 10px;font-size:12px}}
+</style>
+</head>
+<body>
+
+
+
+
+<div class="container">
+
+<div class="header">
+<div class="logo">🗂️</div>
+<div>
+<h1>Stock Metadata Studio · EPS</h1>
+<p>Fast metadata workspace for stock contributors</p>
+</div>
+<button class="menuBtn" id="menuBtn" onclick="toggleMenu(event)" aria-label="Menu">⋮<span class="dot" id="menuDot"></span></button>
+<button type="button" class="headerDownBtn" onclick="scrollPageBottom()" title="Go to bottom" aria-label="Go to bottom">▼</button>
+<div class="menuBox" id="menuBox" onclick="event.stopPropagation()">
+<div style="font-size:14px;font-weight:700;margin-bottom:8px">🔑 API Key (Gemini)</div>
+<input type="password" id="gemKey" placeholder="Paste Gemini API key here" autocomplete="off">
+<input type="text" id="gemModel" placeholder="Model">
+<div class="mrow"><button class="btn-green" onclick="saveGemini()">Save</button><button class="btn-light" onclick="clearGemini()">Remove Key</button></div>
+<div class="counter" id="gemStatus"></div>
+<div class="counter">Free key: aistudio.google.com. Stored only in this browser. With a key, each image is sent to Google. Without a key, the built-in model is used.</div>
+</div>
+</div>
+
+<div class="quickTools" id="quickTools">
+  <div class="quickToolsTitle">⚡ Quick Tools</div>
+  <div class="quickToolsGrid">
+    <a class="quickToolBtn" href="https://www.shutterstock.com/image-vector/crassula-123280909?trackingId=92c4e0a8-83a3-4d7f-9031-fee08917d75c&listId=searchResults" target="_blank" rel="noopener">📸 Shutterstock</a>
+    <a class="quickToolBtn" href="https://stock.adobe.com/search/images?filters%5Bcontent_type%3Aphoto%5D=1&filters%5Bcontent_type%3Aillustration%5D=1&filters%5Bcontent_type%3Azip_vector%5D=1&filters%5Bcontent_type%3Avideo%5D=0&filters%5Bcontent_type%3Atemplate%5D=0&filters%5Bcontent_type%3A3d%5D=0&filters%5Bcontent_type%3Aaudio%5D=0&filters%5Binclude_stock_enterprise%5D=0&filters%5Bis_editorial%5D=0&filters%5Bcontent_type%3Aimage%5D=1&filters%5Bfree_collection%5D=0&k=Nature+Icons&order=nb_downloads&price%5B%24%5D=1&search_page=1&get_facets=0" target="_blank" rel="noopener">🅰️ Adobe Stock</a>
+    <a class="quickToolBtn" href="https://www.google.com/search?udm=50&aep=11" target="_blank" rel="noopener">🤖 Google AI Mode</a>
+    <a class="quickToolBtn" href="https://flow.google.com/" target="_blank" rel="noopener">🎨 Google Flow</a>
+    <a class="quickToolBtn" href="https://www.canva.com/design/DAHWkTeqUDg/u9XAG-jOMKtYFKUzMcjr1g/edit?ui=eyJFIjp7IkE_IjoiTiIsIlMiOiJBQUY4eHV2T3NGcyIsIlQiOjEzfX0" target="_blank" rel="noopener">✏️ Canva Trace</a>
+    <a class="quickToolBtn" href="https://contributor.stock.adobe.com/uploads" target="_blank" rel="noopener">🅰️ Adobe Stock Contributor</a>
+    <a class="quickToolBtn" href="https://contributor.stock.adobe.com/uploads" target="_blank" rel="noopener">📊 Adobe CSV Upload</a>
+  </div>
+</div>
+
+<div class="panel">
+<div class="toolbar">
+<label class="uploadBtn">📁 Upload JPG / PNG / SVG / EPS / AI
+<input id="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.svg,.eps,.ai,image/jpeg,image/png,image/svg+xml">
+</label>
+<label class="uploadBtn csvImportBtn">📥 Import Metadata CSV
+<input id="metadataCsvInput" type="file" accept=".csv,text/csv,application/vnd.ms-excel">
+</label>
+<div class="csvImportHelp">Google AI Mode থেকে তৈরি CSV নির্বাচন করো। ওয়েবসাইট আগে Filename দিয়ে ম্যাচ করবে; না মিললে সিরিয়াল অনুযায়ী বসাবে। Import-এর পর ফাইলের নাম নিজে থেকে টাইটেলের মতো হয়ে যাবে।</div>
+<div id="csvImportStatus" class="csvImportStatus" aria-live="polite">CSV এখনো Import করা হয়নি।</div>
+</div>
+<div class="batchPanel" id="batchPanel">
+  <h3>🧩 Batch Workflow — Google AI Mode</h3>
+  <div class="csvImportHelp">আপলোড করা ফাইলগুলো ক্রমানুসারে ব্যাচে ভাগ করো। দেখানো তালিকা দেখে একই ব্যাচের preview-গুলো Google AI Mode-এ attach করো, তারপর নিচের prompt কপি করো।</div>
+  <div class="batchControls">
+    <div><label for="batchSize" style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">প্রতি ব্যাচে ফাইল</label><select id="batchSize" onchange="renderBatchPanel()"><option value="5">৫টি</option><option value="10" selected>১০টি</option><option value="15">১৫টি</option><option value="20">২০টি</option></select></div>
+    <div><label for="batchNumber" style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">ব্যাচ নির্বাচন</label><select id="batchNumber" onchange="renderBatchPanel()"><option value="1">Batch 1</option></select></div>
+  </div>
+  <div id="batchSummary" class="csvImportStatus">প্রথমে ফাইল আপলোড করো।</div>
+  <div id="batchFileList" class="batchList">এখানে ফাইলের নাম দেখাবে।</div>
+  <div class="batchWorkflowButtons" id="batchWorkflowButtons">
+    <button type="button" class="btn-slate" id="workflowPreviewCsv" onclick="workflowAction(this, previewAdobeCSV)">1. Preview CSV</button>
+    <button type="button" class="btn-slate" id="workflowDownloadCsv" onclick="workflowAction(this, downloadCSV)">2. Adobe CSV Download</button>
+    <button type="button" class="btn-slate" id="workflowCopyPrompt" onclick="copyMasterPrompt(this)">3. CSV create Prompt Copy</button>
+    <button type="button" class="btn-slate" id="copyBatchImagesBtn" onclick="copyBatchImages()">4. 🖼️ Batch Preview PNG Copy</button>
+    <button type="button" class="btn-slate" id="workflowDownloadPreview" onclick="downloadBatchImages()">5. ⬇️ Batch Preview PNG Download</button>
+    <button type="button" class="btn-slate" id="workflowOpenAdobe" onclick="window.open('https://contributor.stock.adobe.com/uploads','_blank','noopener'); markWorkflowDone(this)">6. 🚀 Open Adobe Uploaded Files</button>
+  </div>
+  <div id="batchStatus" class="csvImportHelp" aria-live="polite">নির্বাচিত ব্যাচের প্রিভিউ একটি PNG ছবিতে তৈরি হবে—কপি করো অথবা PNG ডাউনলোড করে Google AI Mode-এ দাও।</div>
+</div>
+<div class="mainActions">
+  <button class="btn-analyze" onclick="analyzeAll()" title="Analyze all uploaded files with AI">🤖 AI Analyze</button>
+  <button class="btn-slate" onclick="checkAll()" title="Check similarity risk across uploaded files">🔍 Similarity</button>
+  <button class="btn-green" onclick="downloadCSV()" title="Validate and download Adobe Stock CSV">💾 Adobe CSV</button>
+  <button class="btn-slate" onclick="copyAll()" title="Copy all Title and Keywords metadata">📋 Copy All</button>
+  <button class="btn-light" onclick="clearHistory()" title="Clear saved similarity history">🧹 Clear History</button>
+  <button class="danger" onclick="clearAll()" title="Remove all uploaded files from the workspace">🗑️ Clear</button>
+</div>
+<button type="button" class="btn-green" style="display:block;width:100%;margin-top:10px;padding:15px;font-size:16px" onclick="downloadAllRenamed()">📦 Download All: Renamed EPS + CSV (ZIP / Folder)</button>
+<div class="ai" id="aiStatus">AI analysis is optional</div>
+<div class="bar"><div id="aiBar"></div></div>
+
+</div>
+
+<div class="banner" id="banner">Upload files. Paste Title and Keywords.</div>
+
+<div class="workflow"><b>Adobe Stock</b> → Upload → paste Title + Keywords → CSV</div>
+
+<div id="results"></div>
+
+<div class="csvPreviewPanel" id="csvPreviewPanel">
+  <h3>👀 Adobe Stock CSV Preview</h3>
+  <div class="validatorSummary" id="csvPreviewSummary">Click “Preview CSV” to inspect the exact rows before download.</div>
+  <button class="btn-slate" onclick="previewAdobeCSV()">👀 Preview CSV</button>
+  <div id="csvPreviewBody"></div>
+</div>
+
+<div id="adobePreflight" class="adobeValidator" style="margin-top:12px">
+  <h3>📋 Adobe Stock Preflight Checklist</h3>
+  <div class="validatorSummary" id="preflightSummary">Complete these checks before opening Adobe Contributor.</div>
+  <label style="display:block;margin:7px 0"><input type="checkbox" id="pfOriginal"> Renamed EPS files (from Download All) match the Filename column in the CSV, and I will upload those renamed files to Adobe Stock.</label>
+  <label style="display:block;margin:7px 0"><input type="checkbox" id="pfCsv"> Adobe CSV Validator shows <b>CSV Ready</b> with no errors.</label>
+  <label style="display:block;margin:7px 0"><input type="checkbox" id="pfUploaded"> The same renamed files have already been uploaded in Adobe Stock → Uploaded Files → New.</label>
+  <div class="row">
+    <button type="button" class="btn-green" id="adobeCsvDownloadBtn" onclick="downloadCSV(); return false;">⬇️ Adobe CSV Download</button>
+    <button type="button" class="btn-analyze" style="margin-top:8px;width:100%" onclick="downloadAllRenamed()">📦 Download All (Renamed EPS + CSV)</button>
+    <button class="btn-green" onclick="openAdobeUploadedFiles()">🚀 Open Adobe Uploaded Files</button>
+  </div>
+</div>
+
+<p class="note">Original filenames stay unchanged.</p>
+</div>
+
+
+<div class="scrollControls" id="scrollControls" aria-label="Page scroll controls">
+  <button type="button" onclick="scrollPageHome()" title="Home" aria-label="Home">⌂ Home</button>
+  <button type="button" onclick="scrollPageTop()" title="Top" aria-label="Top">▲ Top</button>
+</div>
+<script>
+/* =========================
+   RULES (edit here)
+========================= */
+var RULES = {
+  keywordCount: 30,
+  priorityCount: 10,
+  titleMaxLength: 200,
+  titleMinWords: 15,
+  titleMaxWords: 25,
+  similarityWarn: 0.6,
+  similarityHigh: 0.8
+};
+
+var stopWords = new Set(["the","and","with","from","this","that","for","into","collection","set","image","file","stock","img","dsc","copy","final","new","jpg","jpeg","png","svg","eps","ai","photo","picture","pic","design","vector"]);
+var bannedKeywords = new Set(["image","file","stock","jpg","png","svg","eps","ai","untitled","copy","final","good","best","nice","beautiful","amazing","cool","wow"]);
+
+var subjectMap = {
+cloud:["weather","sky","rain","storm","atmosphere","cloudy","forecast","climate"],
+rain:["weather","raindrop","water","storm","wet","cloud"],
+palm:["tree","tropical","leaf","island","beach","summer","vacation","exotic"],
+tree:["forest","nature","plant","woodland","foliage","botanical","green"],
+flower:["floral","botanical","blossom","garden","plant","petal","bloom"],
+icon:["symbol","sign","pictogram","silhouette","outline","button","ui"],
+pattern:["seamless","ornamental","decorative","textile","wallpaper","repeat","texture"],
+business:["finance","office","marketing","corporate","commerce","management","strategy"],
+mosque:["islam","islamic","muslim","architecture","religion","prayer","dome","minaret"],
+islamic:["muslim","islam","religion","culture","arabic","ornament","tradition"],
+ramadan:["islamic","muslim","crescent","lantern","fasting","holy","celebration"],
+eid:["islamic","muslim","celebration","festival","greeting","holiday","crescent"],
+moon:["night","crescent","sky","lunar","astronomy","space"],
+star:["night","sky","shine","space","symbol","sparkle"],
+food:["meal","menu","restaurant","cuisine","dish","delicious","cooking"],
+logo:["brand","branding","identity","emblem","mark","company","corporate"],
+book:["education","reading","library","study","knowledge","literature","learning"],
+heart:["love","romance","valentine","symbol","emotion","care","health"],
+leaf:["plant","nature","green","botanical","foliage","organic","eco"],
+sun:["sunshine","summer","weather","sky","light","bright","day"],
+water:["liquid","drop","blue","aqua","wave","fresh","clean"],
+mountain:["landscape","nature","peak","hiking","outdoor","scenery","travel"],
+car:["vehicle","transport","automobile","drive","road","traffic","transportation"],
+house:["home","building","architecture","property","real","estate","residential"]
+};
+
+var vectorPool = [];
+var photoPool = [];
+
+var categories = [[1,"Animals"],[2,"Buildings and Architecture"],[3,"Business"],[4,"Drinks"],[5,"The Environment"],[6,"States of Mind"],[7,"Food"],[8,"Graphic Resources"],[9,"Hobbies and Leisure"],[10,"Industry"],[11,"Landscapes"],[12,"Lifestyle"],[13,"People"],[14,"Plants and Flowers"],[15,"Culture and Religion"],[16,"Science"],[17,"Social Issues"],[18,"Sports"],[19,"Technology"],[20,"Transport"],[21,"Travel"]];
+
+var filesData = [];
+var queue = [];
+var processing = false;
+var model = null;
+var modelPromise = null;
+var pdfReady = null;
+
+/* =========================
+   UTILITIES
+========================= */
+function escapeHTML(t){
+  return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function tokenize(name){
+  return (name.toLowerCase().replace(/\.[^.]+$/,"").match(/[a-z]{3,}/g) || []);
+}
+function loadScript(src){
+  return new Promise(function(res,rej){
+    var s=document.createElement("script");
+    s.src=src;s.onload=res;s.onerror=function(){rej(new Error("load failed "+src));};
+    document.head.appendChild(s);
+  });
+}
+function setAI(text,pct){
+  document.getElementById("aiStatus").textContent=text;
+  if(pct!==undefined) document.getElementById("aiBar").style.width=pct+"%";
+}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+/* =========================
+   AI MODEL (loads once)
+========================= */
+function loadModel(){
+  if(model) return Promise.resolve(model);
+  if(modelPromise) return modelPromise;
+  modelPromise=(async function(){
+    try{
+      setAI("AI model: loading engine...",10);
+      await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js");
+      setAI("AI model: loading classifier...",40);
+      await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js");
+      setAI("AI model: downloading weights (first time only)...",60);
+      model=await mobilenet.load({version:2,alpha:1.0});
+      setAI("AI model: ready (cached by browser)",100);
+      return model;
+    }catch(e){
+      setAI("AI model unavailable. Filename-based metadata will be used. ("+e.message+")",0);
+      modelPromise=null;
+      return null;
+    }
+  })();
+  return modelPromise;
+}
+
+
+/* =========================
+   GEMINI
+========================= */
+var GEM_DEFAULT_MODEL="gemini-1.5-flash";
+function gemGet(k){try{return localStorage.getItem(k)||"";}catch(e){return "";}}
+function gemKey(){return gemGet("sms_gem_key").trim();}
+function gemModel(){return (gemGet("sms_gem_model2").trim()||GEM_DEFAULT_MODEL);}
+function toggleMenu(e){e.stopPropagation();document.getElementById("menuBox").classList.toggle("open");}
+document.addEventListener("click",function(){var m=document.getElementById("menuBox");if(m)m.classList.remove("open");});
+function gemUI(){
+  var mb=document.getElementById("menuBtn");if(mb) mb.className="menuBtn"+(gemKey()?" on":"");
+  var st=document.getElementById("gemStatus");if(!st) return;
+  document.getElementById("gemModel").value=gemModel();
+  st.textContent=gemKey()?"✅ Gemini is ON ("+gemModel()+"). New analysis uses Gemini.":"Gemini is OFF. Using the built-in model.";
+}
+function saveGemini(){
+  var k=document.getElementById("gemKey").value.trim();
+  var m=document.getElementById("gemModel").value.trim()||GEM_DEFAULT_MODEL;
+  try{
+    if(k) localStorage.setItem("sms_gem_key",k);
+    localStorage.setItem("sms_gem_model2",m);
+  }catch(e){alert("Could not save in this browser.");}
+  document.getElementById("gemKey").value="";
+  gemUI();
+}
+function clearGemini(){
+  try{localStorage.removeItem("sms_gem_key");}catch(e){}
+  document.getElementById("gemKey").value="";
+  gemUI();
+}
+function canvasToJpegB64(c,maxSide){
+  var w=c.width,h=c.height,sc=Math.min(1,maxSide/Math.max(w,h));
+  var t=document.createElement("canvas");
+  t.width=Math.max(1,Math.round(w*sc));t.height=Math.max(1,Math.round(h*sc));
+  var x=t.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,t.width,t.height);
+  x.drawImage(c,0,0,t.width,t.height);
+  return t.toDataURL("image/jpeg",0.8).split(",")[1];
+}
+async function geminiAnalyze(canvas, item) {
+  var key = gemKey();
+  var catList = categories.map(function(c) { return c[0] + "=" + c[1]; }).join(", ");
+
+  var prompt = "You are an expert Adobe Stock metadata writer. Analyze ONLY what is visibly present in the artwork. Follow current Adobe Stock metadata rules. Return JSON only.\n" +
+   "TITLE: Write ONE clear, natural, accurate, buyer-friendly title of 15 to 25 words AND 200 characters or fewer. Describe the main visible subject and important visible context. Do not use commas, hashtags, keyword stuffing, file names, file extensions, technical parameters, camera/gear terms, artist names, real people, fictional characters, brands, trademarks, copyrighted works, or claims not visible in the artwork. Do not use the words vector, photo, image, stock, design, illustration unless they are genuinely the subject.\n" +
+   "KEYWORDS: Return EXACTLY " + RULES.keywordCount + " English single-word keywords, ordered by importance. The first " + RULES.priorityCount + " must be the strongest and most specific search terms. Include the important words/concepts from the title in the top 10 when they accurately describe the artwork. Use specific nouns, adjectives, concepts, setting, subject, action, and relevant visual context. Use single words only. Never use two-word phrases. No duplicate keywords. No irrelevant/generic filler, file information, file extensions, camera/technical metadata, brands, trademarks, artist names, real people, fictional characters, or copyrighted-work references. Use one language only.\n" +
+   "CATEGORY: Choose the best matching number from: " + catList + ".\n" +
+   "Return JSON format: {\"title\":\"...\",\"keywords\":[\"...\"],\"category\":8}";
+
+  var body = {
+    contents: [{
+      parts: [
+        { text: prompt },
+        { inline_data: { mime_type: "image/jpeg", data: canvasToJpegB64(canvas, 768) } }
+      ]
+    }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      temperature: 0.2,
+      maxOutputTokens: 2048
+    }
+  };
+
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(gemModel()) + ":generateContent";
+  var resp = null, tries = 0;
+
+  while (tries < 3) {
+    resp = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify(body)
+    });
+
+    if (resp.status === 429 || resp.status === 503 || resp.status === 500) {
+      tries++;
+      if (tries >= 3) break;
+      var wait = 3000 * tries;
+      stage(item, "Gemini busy, retrying in " + (wait / 1000) + "s...");
+      await sleep(wait);
+      continue;
+    }
+    break;
+  }
+
+  if (!resp.ok) {
+    var msg = "";
+    try { var j = await resp.json(); msg = (j.error && j.error.message) || ""; } catch (e) {}
+    throw new Error("Gemini " + resp.status + (msg ? ": " + msg.slice(0, 200) : ""));
+  }
+
+  var data = await resp.json();
+  var txt = "";
+  try { txt = data.candidates[0].content.parts[0].text; } catch (e) {}
+  txt = txt.replace(/```json|```/g, "").trim();
+  var out = JSON.parse(txt);
+
+  var kws = [];
+  (out.keywords || []).forEach(function(k) { addUnique(kws, String(k)); });
+  var title = String(out.title || "").replace(/\s+/g, " ").replace(/[,;|]/g, " ").replace(/[^A-Za-z0-9 ]/g, "").replace(/\s+/g, " ").trim().slice(0, RULES.titleMaxLength);
+  if (!title || kws.length !== RULES.keywordCount) throw new Error("Gemini must return a 15-25 word title and exactly " + RULES.keywordCount + " single-word keywords");
+
+  var cat = parseInt(out.category, 10);
+  if (!(cat >= 1 && cat <= 21)) cat = 8;
+
+  return { title: title, keywords: kws, category: cat };
+}
+async function classify(canvas){
+  var m=await loadModel();
+  if(!m||!canvas) return [];
+  try{
+    var r=await m.classify(canvas,5);
+    return r.filter(function(x){return x.probability>0.04;});
+  }catch(e){return [];}
+}
+
+/* =========================
+   PREVIEW RENDERERS
+========================= */
+async function svgToUrl(file){
+  try{
+    var text=await file.text();
+    var doc=new DOMParser().parseFromString(text,"image/svg+xml");
+    var root=doc.documentElement;
+    if(root&&root.nodeName.toLowerCase()==="svg"&&!doc.querySelector("parsererror")){
+      if(!root.getAttribute("xmlns")) root.setAttribute("xmlns","http://www.w3.org/2000/svg");
+      var w=root.getAttribute("width"),h=root.getAttribute("height");
+      var vb=(root.getAttribute("viewBox")||"").trim().split(/[\s,]+/).map(Number);
+      var bad=function(v){return !v||/%/.test(v)||!parseFloat(v);};
+      if(bad(w)||bad(h)){
+        var vw=vb.length===4&&vb[2]>0?vb[2]:512,vh=vb.length===4&&vb[3]>0?vb[3]:512;
+        root.setAttribute("width",vw);root.setAttribute("height",vh);
+        if(vb.length!==4) root.setAttribute("viewBox","0 0 "+vw+" "+vh);
+      }
+      return URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(root)],{type:"image/svg+xml"}));
+    }
+  }catch(e){}
+  return URL.createObjectURL(new Blob([file],{type:"image/svg+xml"}));
+}
+
+
+function imgToCanvas(url,maxSize){
+  return new Promise(function(res){
+    var img=new Image();
+    img.onload=function(){
+      var max=maxSize||320,w=img.naturalWidth||max,h=img.naturalHeight||max;
+      var s=Math.min(1,max/Math.max(w,h));
+      if(!isFinite(s)||s<=0) s=1;
+      var c=document.createElement("canvas");
+      c.width=Math.max(1,Math.round(w*s));c.height=Math.max(1,Math.round(h*s));
+      var x=c.getContext("2d");
+      x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+      try{x.drawImage(img,0,0,c.width,c.height);}catch(e){}
+      res(c);
+    };
+    img.onerror=function(){res(null);};
+    img.src=url;
+  });
+}
+
+async function ensurePdfJs(){
+  if(pdfReady) return pdfReady;
+  pdfReady=(async function(){
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+    var r=await fetch("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js");
+    var t=await r.text();
+    pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([t],{type:"text/javascript"}));
+  })();
+  return pdfReady;
+}
+
+async function renderAI(file){
+  if(file.size>60*1024*1024) throw new Error("AI file too large for safe preview");
+  await ensurePdfJs();
+  var buf=await file.arrayBuffer();
+  var pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  var page=await pdf.getPage(1);
+  var vp=page.getViewport({scale:1});
+  var s=Math.min(2,900/Math.max(vp.width,vp.height));
+  var v=page.getViewport({scale:s});
+  var c=document.createElement("canvas");
+  c.width=Math.round(v.width);c.height=Math.round(v.height);
+  var x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+  await page.render({canvasContext:x,viewport:v}).promise;
+  try{pdf.destroy();}catch(e){}
+  return c;
+}
+
+function findSeq(bytes,seq,from){
+  var n=bytes.length-seq.length;
+  for(var i=from||0;i<=n;i++){
+    var ok=true;
+    for(var k=0;k<seq.length;k++){if(bytes[i+k]!==seq[k]){ok=false;break;}}
+    if(ok) return i;
+  }
+  return -1;
+}
+
+async function renderPdfBytes(bytes){
+  await ensurePdfJs();
+  var pdf=await pdfjsLib.getDocument({data:bytes}).promise;
+  var page=await pdf.getPage(1);
+  var vp=page.getViewport({scale:1});
+  var s=Math.min(2,900/Math.max(vp.width,vp.height));
+  var v=page.getViewport({scale:s});
+  var c=document.createElement("canvas");
+  c.width=Math.round(v.width);c.height=Math.round(v.height);
+  var x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+  await page.render({canvasContext:x,viewport:v}).promise;
+  try{pdf.destroy();}catch(e){}
+  return c;
+}
+
+function embeddedJpegCanvas(bytes){
+  var best=null,i=0;
+  while(i<bytes.length-3){
+    if(bytes[i]===0xFF&&bytes[i+1]===0xD8&&bytes[i+2]===0xFF){
+      var j=i+3;
+      while(j<bytes.length-1&&!(bytes[j]===0xFF&&bytes[j+1]===0xD9)) j++;
+      if(j<bytes.length-1){
+        var len=j+2-i;
+        if(!best||len>best.len) best={start:i,len:len};
+        i=j+2;continue;
+      }
+    }
+    i++;
+  }
+  if(!best||best.len<2000) return Promise.resolve(null);
+  var url=URL.createObjectURL(new Blob([bytes.slice(best.start,best.start+best.len)],{type:"image/jpeg"}));
+  return imgToCanvas(url);
+}
+
+var gsLoaded=false;
+async function renderWithGhostscript(bytes,item){
+  var base="https://cdn.jsdelivr.net/npm/@jspawn/ghostscript-wasm@0.0.2/";
+  if(!gsLoaded){
+    stage(item,"Downloading Ghostscript renderer (about 16 MB, first time only)...");
+    await loadScript(base+"gs.js");
+    gsLoaded=true;
+  }
+  stage(item,"Rendering EPS with Ghostscript. The page may pause for a few seconds...");
+  await sleep(150);
+  var gs=await Module({
+    locateFile:function(f){return base+f;},
+    noInitialRun:true,
+    print:function(){},
+    printErr:function(){}
+  });
+  gs.FS.writeFile("in.eps",bytes);
+  try{
+    gs.callMain(["-dNOPAUSE","-dBATCH","-dSAFER","-dEPSCrop","-sDEVICE=png16m","-r72","-dTextAlphaBits=4","-dGraphicsAlphaBits=4","-sOutputFile=out.png","in.eps"]);
+  }catch(e){}
+  var out=gs.FS.readFile("out.png");
+  var url=URL.createObjectURL(new Blob([out],{type:"image/png"}));
+  var c=await imgToCanvas(url);
+  if(!c) throw new Error("Ghostscript produced no image");
+  return c;
+}
+
+async function renderEPS(file,item){
+  if(file.size>60*1024*1024) throw new Error("EPS too large for safe preview");
+  var bytes=new Uint8Array(await file.arrayBuffer());
+
+  /* 1. PDF data embedded inside the EPS */
+  var p=findSeq(bytes,[0x25,0x50,0x44,0x46,0x2D]);
+  if(p>=0){
+    try{
+      stage(item,"Reading embedded PDF artwork...");
+      return await renderPdfBytes(bytes.slice(p));
+    }catch(e){}
+  }
+  /* 2. Embedded JPEG preview */
+  try{
+    var j=await embeddedJpegCanvas(bytes);
+    if(j) return j;
+  }catch(e){}
+  /* 3. Ghostscript (real PostScript renderer) */
+  if(file.size<=25*1024*1024){
+    return await renderWithGhostscript(bytes,item);
+  }
+  throw new Error("file too large for Ghostscript on a phone");
+}
+
+/* =========================
+   METADATA ENGINE
+========================= */
+var genericKeywords = new Set(["beautiful","creative","design","artwork","illustration","graphic","visual","commercial","element","simple","clean","modern","digital","background","concept","branding","template","print","web","poster","scalable","editable","decorative","minimal","abstract","image","picture","stock","content"]);
+function addUnique(list,word){
+  if(!word) return;
+  word=word.toLowerCase().trim().replace(/\\s+/g," ");
+  if(!/^[a-z][a-z ]*$/.test(word)||word.length<3) return;
+  if(word.split(" ").length>2) return;
+  if(bannedKeywords.has(word)||stopWords.has(word)||genericKeywords.has(word)) return;
+  if(list.indexOf(word)!==-1) return;
+  if(list.indexOf(word+"s")!==-1||list.indexOf(word.replace(/s$/,""))!==-1) return;
+  list.push(word);
+}
+
+function labelWords(labels){
+  var out=[];
+  labels.forEach(function(l){
+    l.className.split(",").forEach(function(part){
+      part=part.trim().toLowerCase();
+      if(part) out.push(part);
+    });
+  });
+  return out;
+}
+
+function adobeCleanTitle(title){
+  return String(title||"")
+    .replace(/[,;|]/g," ")
+    .replace(/[^A-Za-z0-9 ]/g,"")
+    .replace(/\s+/g," ")
+    .trim()
+    .slice(0,RULES.titleMaxLength)
+    .trim();
+}
+
+function adobeNormalizeKeywords(list,title){
+  var candidates=[];
+  var seen={};
+  function collect(raw){
+    String(raw||"").split(/[^a-zA-Z0-9]+/).forEach(function(part){
+      var k=String(part||"").toLowerCase().trim();
+      if(!k || k.length<2 || k.length>40) return;
+      if(bannedKeywords.has(k)||stopWords.has(k)||genericKeywords.has(k)) return;
+      if(/^(jpg|jpeg|png|svg|eps|ai|file|filename|camera|megapixel|dpi|iso)$/.test(k)) return;
+      if(seen[k]) return;
+      seen[k]=1; candidates.push(k);
+    });
+  }
+  (Array.isArray(list)?list:[]).forEach(collect);
+
+  var titleWords=adobeCleanTitle(title).toLowerCase().match(/[a-z0-9]+/g)||[];
+  var priority=[];
+  var prioritySeen={};
+  function addPriority(w){
+    w=String(w||"").toLowerCase().trim();
+    if(!w || prioritySeen[w] || bannedKeywords.has(w)||stopWords.has(w)||genericKeywords.has(w)) return;
+    prioritySeen[w]=1;
+    if(candidates.indexOf(w)!==-1) priority.push(w);
+  }
+  // First use important title words, then fill the first 10 with the AI supplied ranking.
+  titleWords.forEach(addPriority);
+  candidates.forEach(function(k){ if(priority.length<RULES.priorityCount) addPriority(k); });
+
+  var rest=candidates.filter(function(k){return !prioritySeen[k];});
+  return priority.concat(rest).slice(0,RULES.keywordCount);
+}
+
+function adobeNormalizeMetadata(title,keywords){
+  var cleanTitle=adobeCleanTitle(title);
+  var cleanKeywords=adobeNormalizeKeywords(keywords,cleanTitle);
+  return {title:cleanTitle,keywords:cleanKeywords};
+}
+
+function buildMetadata(name,type,labels){
+  var isVector=(type==="svg"||type==="eps"||type==="ai");
+  var fileWords=tokenize(name).filter(function(w){return !stopWords.has(w);});
+  var labs=labelWords(labels);
+  var labSingle=[];
+  labs.forEach(function(p){p.split(/\s+/).forEach(function(w){labSingle.push(w);});});
+
+  var keywords=[];
+
+  /* 1. highest priority: filename subject, then AI top label */
+  fileWords.slice(0,4).forEach(function(w){addUnique(keywords,w);});
+  if(labs[0]) addUnique(keywords,labs[0]);
+  labs.slice(1,4).forEach(function(w){addUnique(keywords,w);});
+
+  /* 2. subject research from known subjects */
+  var all=fileWords.concat(labSingle);
+  var related=[];
+  all.forEach(function(w){
+    for(var k in subjectMap){
+      if(w===k||w===k+"s"){subjectMap[k].forEach(function(r){related.push(r);});}
+    }
+  });
+  related.forEach(function(w){addUnique(keywords,w);});
+
+  /* 3. remaining filename and label words */
+  fileWords.forEach(function(w){addUnique(keywords,w);});
+  labSingle.forEach(function(w){addUnique(keywords,w);});
+
+  /* 4. type-relevant secondary terms */
+  var pool=isVector?vectorPool:photoPool;
+  var i=0;
+  while(keywords.length<RULES.keywordCount&&i<pool.length){addUnique(keywords,pool[i]);i++;}
+
+  keywords=keywords.slice(0,RULES.keywordCount);
+
+  /* title */
+  var subj=(labs[0]||fileWords.slice(0,3).join(" ")||"abstract").replace(/\b[a-z]/g,function(c){return c.toUpperCase();});
+  var fileTitle=fileWords.slice(0,4).join(" ").replace(/\b[a-z]/g,function(c){return c.toUpperCase();});
+  var main=fileTitle||subj;
+  if(fileTitle&&labs[0]&&fileWords.indexOf(labs[0].split(" ")[0])===-1&&!isVector){main=fileTitle+" "+subj;}
+  var title;
+  if(isVector){
+    var extra=keywords.filter(function(k){return k!=="vector"&&main.toLowerCase().indexOf(k)===-1;}).slice(0,3);
+    title=main+(extra.length?", "+extra.join(", "):"");
+  }else{
+    var ex=keywords.filter(function(k){return main.toLowerCase().indexOf(k)===-1;}).slice(0,3);
+    title=main+", "+ex.join(", ");
+  }
+  title=adobeCleanTitle(title);
+  var normalized=adobeNormalizeMetadata(title,keywords);
+  return {title:normalized.title,keywords:normalized.keywords,isVector:isVector};
+}
+
+/* =========================
+   SIMILARITY RISK
+========================= */
+function jaccard(a,b){
+  var sa=new Set(a),sb=new Set(b),inter=0;
+  sa.forEach(function(x){if(sb.has(x)) inter++;});
+  var uni=sa.size+sb.size-inter;
+  return uni?inter/uni:0;
+}
+function titleSim(a,b){
+  return jaccard(a.toLowerCase().match(/[a-z]+/g)||[],b.toLowerCase().match(/[a-z]+/g)||[]);
+}
+function dHash(canvas,flip){
+  var mid=document.createElement("canvas");mid.width=36;mid.height=32;
+  var mx=mid.getContext("2d");mx.fillStyle="#fff";mx.fillRect(0,0,36,32);
+  mx.imageSmoothingQuality="high";mx.drawImage(canvas,0,0,36,32);
+  var c=document.createElement("canvas");c.width=9;c.height=8;
+  var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,9,8);
+  x.imageSmoothingQuality="high";
+  if(flip){x.translate(9,0);x.scale(-1,1);}
+  x.drawImage(mid,0,0,9,8);
+  var d=x.getImageData(0,0,9,8).data,g=[],i,bits="";
+  for(i=0;i<72;i++) g.push(0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2]);
+  for(var y=0;y<8;y++)for(var xx=0;xx<8;xx++) bits+=(g[y*9+xx]>g[y*9+xx+1])?"1":"0";
+  return bits;
+}
+function ham(a,b){var n=0;for(var i=0;i<a.length;i++) if(a[i]!==b[i]) n++;return n;}
+function visualSim(a,b){
+  if(!a.hash||!b.hash) return 0;
+  var d=ham(a.hash,b.hash);
+  if(b.hashFlip) d=Math.min(d,ham(a.hash,b.hashFlip));
+  return 1-d/64;
+}
+function loadHistory(){try{return JSON.parse(localStorage.getItem("sms_hist")||"[]");}catch(e){return [];}}
+function saveHistory(item){
+  if(!item.hash) return;
+  try{
+    var h=loadHistory().filter(function(x){return x.n!==item.name;});
+    h.push({n:item.name,hash:item.hash,hashFlip:item.hashFlip});
+    localStorage.setItem("sms_hist",JSON.stringify(h.slice(-500)));
+  }catch(e){}
+}
+function clearHistory(){
+  try{localStorage.removeItem("sms_hist");}catch(e){}
+  alert("Similarity history cleared.");
+}
+
+function computeRisk(idx){
+  var me=filesData[idx],wm=0,wmName="",wv=0,wvName="",wvHist=false;
+  var names={};
+  filesData.forEach(function(o){names[o.name]=1;});
+  filesData.forEach(function(o,j){
+    if(j===idx) return;
+    var s=Math.max(jaccard(me.keywords,o.keywords),titleSim(me.title,o.title));
+    if(s>wm){wm=s;wmName=o.name;}
+    var v=visualSim(me,o);
+    if(v>wv){wv=v;wvName=o.name;wvHist=false;}
+  });
+  loadHistory().forEach(function(h){
+    if(names[h.n]) return;
+    var v=visualSim(me,h);
+    if(v>wv){wv=v;wvName=h.n;wvHist=true;}
+  });
+  var g=new Set(vectorPool.concat(photoPool)),generic=0;
+  me.keywords.forEach(function(k){if(g.has(k)) generic++;});
+  var vp=Math.round(wv*100),mp=Math.round(wm*100);
+  var cls="ok",parts=[];
+  if(wv>=0.9){cls="high";parts.push("Artwork looks almost the same ("+vp+"%) as <b>"+escapeHTML(wvName)+"</b>"+(wvHist?" (analysed earlier)":"")+". Do not upload both.");}
+  else if(wv>=0.8){cls="mid";parts.push("Artwork looks visually similar ("+vp+"%) to <b>"+escapeHTML(wvName)+"</b>"+(wvHist?" (analysed earlier)":"")+". Make sure it is clearly different.");}
+  if(wm>=RULES.similarityHigh){cls="high";parts.push("Title/keywords are very close ("+mp+"%) to "+escapeHTML(wmName)+". Rewrite them.");}
+  else if(wm>=RULES.similarityWarn){if(cls==="ok") cls="mid";parts.push("Title/keywords overlap ("+mp+"%) with "+escapeHTML(wmName)+". Make the title more specific.");}
+  if(!parts.length) parts.push("Low risk. Closest visual match "+vp+"%, closest metadata match "+mp+"%.");
+  if(me.keywords.length<RULES.keywordCount){if(cls==="ok") cls="mid";parts.push("Only "+me.keywords.length+" keywords.");}
+  if(generic>=18){if(cls==="ok") cls="mid";parts.push("Many keywords are generic. Add subject-specific words.");}
+  if(!me.hash) parts.push("No visual check for this file because no preview image exists.");
+  return {cls:cls,msg:parts.join(" ")};
+}
+
+async function downloadImage(id){
+  var item=getItem(id);if(!item) return;
+  var btn=document.getElementById("downloadImgBtn"+id);
+  if(btn){btn.disabled=true;btn.textContent="⏳ Downloading...";}
+  try{
+    var src=await getSearchFile(item);
+    if(!src){banner("No preview image for this file. Export a PNG or JPG preview first.","warning");return;}
+    var isRaster=(item.type==="jpg"||item.type==="png");
+    var name=isRaster?item.name:item.name.replace(/\.[^.]+$/,"" )+"-preview.png";
+    var objectUrl=URL.createObjectURL(src);
+    var a=document.createElement("a");
+    a.href=objectUrl;a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    if(btn){btn.textContent="✅ Downloaded";btn.classList.add("copied");}
+    banner("⬇️ Saved to Downloads as "+escapeHTML(name)+".","ok");
+    setTimeout(function(){URL.revokeObjectURL(objectUrl);if(btn){btn.disabled=false;btn.textContent="⬇️ Download";btn.classList.remove("copied");}},1800);
+  }catch(err){
+    console.error("Image download error:",err);
+    banner("⚠️ Image could not be downloaded.","warning");
+    if(btn){btn.disabled=false;btn.textContent="⬇️ Download";}
+  }finally{
+    if(btn && btn.textContent==="⏳ Downloading..."){btn.disabled=false;btn.textContent="⬇️ Download";}
+  }
+}
+function canvasToFile(c){
+  return new Promise(function(res){
+    c.toBlob(function(b){res(b?new File([b],"search.png",{type:"image/png"}):null);},"image/png");
+  });
+}
+
+/* =========================
+   COPY IMAGE
+   Copies the rendered SVG/image as PNG to the system clipboard.
+   Works on HTTPS (GitHub Pages) and supported mobile/desktop browsers.
+========================= */
+async function getCopyCanvas(item){
+  if(!item) return null;
+  if(item.canvas) return item.canvas;
+
+  var url=null;
+  try{
+    if(item.previewUrl){
+      url=item.previewUrl;
+    }else if(item.type==="jpg"||item.type==="png"){
+      url=URL.createObjectURL(item.file);
+    }else if(item.type==="svg"){
+      url=await svgToUrl(item.file);
+      item.previewUrl=url;
+    }
+    if(!url) return null;
+    return await imgToCanvas(url,1600);
+  }catch(e){
+    return null;
+  }
+}
+
+function canvasPngBlob(c){
+  return new Promise(function(resolve){
+    try{
+      c.toBlob(function(blob){resolve(blob||null);},"image/png");
+    }catch(e){resolve(null);}
+  });
+}
+
+async function copyImage(id){
+  var item=getItem(id);
+  if(!item) return;
+  var copyBtn=document.getElementById("copyImgBtn"+id);
+  if(!window.isSecureContext || !navigator.clipboard || !window.ClipboardItem){
+    alert("Image copy needs HTTPS. Open the site from your GitHub Pages address (https://...), not a local file/downloads page.");
+    return;
+  }
+  if(copyBtn){copyBtn.disabled=true;copyBtn.textContent="⏳ Copying...";}
+  banner("📋 Preparing image for clipboard...","run");
+  try{
+    var c=await getCopyCanvas(item);
+    if(!c){banner("⚠️ Image preview could not be prepared.","warning");return;}
+    var blob=await canvasPngBlob(c);
+    if(!blob){banner("⚠️ PNG copy data could not be created.","warning");return;}
+    var clipItem=new ClipboardItem({"image/png":blob});
+    await navigator.clipboard.write([clipItem]);
+    if(copyBtn){
+      copyBtn.disabled=false;
+      copyBtn.classList.add("copied");
+      copyBtn.textContent="✅ Copied";
+      clearTimeout(copyBtn._copiedTimer);
+      copyBtn._copiedTimer=setTimeout(function(){
+        copyBtn.classList.remove("copied");
+        copyBtn.textContent="📋 Copy Image";
+      },1800);
+    }
+    banner("✅ Image copied. You can paste it directly into Canva, Adobe, chat, or another app.","ok");
+  }catch(err){
+    console.error("Image clipboard error:",err);
+    banner("⚠️ Browser blocked image clipboard. Use the GitHub Pages HTTPS version and allow clipboard access.","warning");
+  }finally{
+    if(copyBtn && copyBtn.textContent==="⏳ Copying..."){copyBtn.disabled=false;copyBtn.textContent="📋 Copy Image";}
+  }
+}
+async function getSearchFile(item){
+  if(item.type==="jpg"||item.type==="png") return item.file;
+  var c=item.canvas;
+  if(item.type==="svg"&&item.previewUrl) c=await imgToCanvas(item.previewUrl,800);
+  return c?await canvasToFile(c):null;
+}
+
+function reverseSearch(id,site){
+  var item=getItem(id);if(!item) return;
+  var url=site==="tineye"?"https://tineye.com/":"https://www.google.com/";
+  var label=site==="tineye"?"TinEye":"Google";
+  window.open(url,"_blank","noopener");
+  banner(label+" opened in a new tab. Use the site's upload option to select the image when needed.","ok");
+}
+/* ===== EPS EDITION: filename is built from the Title. File bytes are never modified. ===== */
+function slugBase(item){
+  var t=String(item.title||"").trim();
+  if(!t) return "";
+  /* Filename = Title exactly. Only characters Windows/Android/macOS do not allow in filenames are removed. */
+  return t.replace(/[\\\/:*?"<>|\u0000-\u001f]/g,"").replace(/\s+/g," ").replace(/^[\s.]+|[\s.]+$/g,"").slice(0,180);
+}
+function exportName(item){
+  var orig=item.origName||item.name||("file-"+item.id+".eps");
+  var base=slugBase(item);
+  if(!base) return orig;
+  var ext=(orig.indexOf(".")>-1?orig.split(".").pop():(item.ext||"eps")).toLowerCase();
+  var n=0;
+  for(var i=0;i<filesData.length;i++){
+    var o=filesData[i]; if(o===item) break;
+    var oe=String(o.origName||"").split(".").pop().toLowerCase();
+    if(slugBase(o).toLowerCase()===base.toLowerCase()&&oe===ext) n++;
+  }
+  return base+(n?" ("+(n+1)+")":"")+"."+ext;
+}
+function makeFileName(item){return exportName(item);}
+function refreshAllNames(){filesData.forEach(function(i){i.name=exportName(i);refreshNameUI(i);});}
+
+/* Fast EPS preview: starts right at upload (embedded PDF/JPEG first, Ghostscript only as fallback) */
+async function autoEpsPreview(item){
+  if(item.type!=="eps"||item.canvas) return;
+  stage(item,"Looking for EPS preview...");
+  try{
+    var r=await withRenderLock(function(){return renderEPS(item.file,item);});
+    item.canvas=r;item.previewEl="canvas";item.previewNote="";
+  }catch(e){
+    item.previewEl=null;
+    item.previewNote="EPS preview failed ("+e.message+"). Download still works with the original file bytes.";
+  }
+  item.stage="";
+  paintCard(item);
+}
+
+/* CRC32 + STORE-only ZIP (no compression, bytes stay identical) */
+var _crcT=null;
+function crc32(buf){
+  if(!_crcT){_crcT=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;_crcT[n]=c>>>0;}}
+  var crc=-1;for(var i=0;i<buf.length;i++)crc=_crcT[(crc^buf[i])&255]^(crc>>>8);
+  return (crc^-1)>>>0;
+}
+async function buildZip(entries){
+  var parts=[],central=[],offset=0,cdSize=0,enc=new TextEncoder();
+  for(var i=0;i<entries.length;i++){
+    var e=entries[i],data=new Uint8Array(await e.blob.arrayBuffer()),crc=crc32(data),nm=enc.encode(e.name),len=data.length;
+    var lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(12,0x21,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,len,true);lh.setUint32(22,len,true);lh.setUint16(26,nm.length,true);
+    parts.push(lh.buffer,nm,data);
+    var ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(14,0x21,true);
+    ch.setUint32(16,crc,true);ch.setUint32(20,len,true);ch.setUint32(24,len,true);ch.setUint16(28,nm.length,true);ch.setUint32(42,offset,true);
+    central.push(ch.buffer,nm);cdSize+=46+nm.length;offset+=30+nm.length+len;
+  }
+  var end=new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true);end.setUint16(8,entries.length,true);end.setUint16(10,entries.length,true);end.setUint32(12,cdSize,true);end.setUint32(16,offset,true);
+  return new Blob(parts.concat(central,[end.buffer]),{type:"application/zip"});
+}
+function triggerDownload(blob,name){
+  var url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},4000);
+}
+async function downloadAllRenamed(){
+  if(!filesData.length){alert("Upload files first.");return;}
+  var entries=filesData.map(function(it){return {name:exportName(it),blob:it.file};});
+  var noTitle=filesData.filter(function(it){return !slugBase(it);}).length;
+  entries.push({name:"Adobe_Stock_Metadata.csv",blob:new Blob([buildAdobeCSVText()],{type:"text/csv;charset=utf-8"})});
+  var warn=noTitle?" ("+noTitle+" file(s) have no title yet, so they keep the original name.)":"";
+  if(window.showDirectoryPicker){
+    try{
+      var dir=await window.showDirectoryPicker({mode:"readwrite"});
+      for(var i=0;i<entries.length;i++){
+        var fh=await dir.getFileHandle(entries[i].name,{create:true});
+        var w=await fh.createWritable();await w.write(entries[i].blob);await w.close();
+      }
+      banner("✅ "+(entries.length-1)+" file(s) + CSV saved to the chosen folder with the original bytes unchanged."+warn,"ok");
+      return;
+    }catch(err){
+      if(err&&err.name==="AbortError") return;
+      console.warn("Folder save failed, using ZIP",err);
+    }
+  }
+  banner("⏳ Building ZIP (no compression)...","run");
+  var zip=await buildZip(entries);
+  triggerDownload(zip,"Stock_EPS_Renamed.zip");
+  banner("✅ ZIP downloaded: renamed files + Adobe CSV. File bytes are unchanged."+warn,"ok");
+}
+
+function refreshNameUI(item){
+  var fn=document.getElementById("fn"+item.id);if(fn&&fn!==document.activeElement) fn.value=item.name;
+  var fm=document.getElementById("fnm"+item.id);if(fm) fm.textContent=item.name;
+}
+
+function setName(id,v){
+  var item=getItem(id);if(!item) return;
+  // Keep the uploaded filename as the permanent key.
+  // User edits are intentionally not allowed to change the CSV mapping key.
+  var fm=document.getElementById("fnm"+id);
+  if(fm) fm.textContent=exportName(item);
+  var fn=document.getElementById("fn"+id);
+  if(fn) fn.value=exportName(item);
+  var h=document.getElementById("fh"+id);
+  if(h) h.textContent="Filename is built from the title and is used in the Adobe CSV.";
+}
+
+function saveRenamed(id){
+  var item=getItem(id);if(!item) return;
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(item.file);a.download=exportName(item);
+  document.body.appendChild(a);a.click();a.remove();
+  banner("💾 Saved as "+escapeHTML(exportName(item))+" (original bytes, same name as in the Adobe CSV).","ok");
+}
+
+function checkOne(id){
+  var i=getIndex(id);if(i<0) return;
+  var el=document.getElementById("risk"+id);if(!el) return;
+  var r=computeRisk(i);
+  var extra=filesData.length<2?" Only one file uploaded, so there is nothing to compare with yet.":"";
+  el.className="risk "+r.cls;
+  el.innerHTML="<b>Similarity Risk:</b> "+r.msg+extra;
+}
+
+function runRisk(alertUser){
+  filesData.forEach(function(item,i){
+    var el=document.getElementById("risk"+item.id);
+    if(!el) return;
+    var r=computeRisk(i);
+    el.className="risk "+r.cls;
+    el.innerHTML="<b>Similarity Risk:</b> "+r.msg;
+  });
+  if(alertUser&&!filesData.length) alert("Upload files first.");
+}
+
+
+
+function previewAdobeCSV(){
+  var body=document.getElementById("csvPreviewBody");
+  var summary=document.getElementById("csvPreviewSummary");
+  if(!body||!summary) return;
+  if(!filesData.length){
+    summary.innerHTML="⚠️ Upload files first.";
+    body.innerHTML='<div class="csvPreviewEmpty">No files available.</div>';
+    return;
+  }
+
+  var check=validateAdobeCSV(false);
+  var rows=filesData.map(function(item,i){
+    var fn=String(exportName(item)||"");
+    var title=String(item.title||"");
+    var kws=Array.isArray(item.keywords)?item.keywords.join(", "):"";
+    var cat=catName(item.category);
+    return "<tr>"+
+      "<td>"+(i+1)+"</td>"+
+      "<td>"+escapeHTML(fn)+"</td>"+
+      "<td>"+escapeHTML(title)+"</td>"+
+      "<td class=\"csvKw\">"+escapeHTML(kws)+"</td>"+
+      "<td>"+escapeHTML(cat)+"</td>"+
+    "</tr>";
+  }).join("");
+
+  body.innerHTML=
+    '<div class="csvPreviewWrap"><table class="csvPreviewTable">'+
+    '<thead><tr><th>#</th><th>Filename</th><th>Title</th><th>Keywords</th><th>Category</th></tr></thead>'+
+    '<tbody>'+rows+'</tbody></table></div>';
+
+  summary.innerHTML=(check.ok?"✅ <b>Preview ready.</b>":"⚠️ <b>Preview generated, but Validator found "+check.errors.length+" error(s).</b>")+
+    " This is the data that will be exported to the Adobe CSV.";
+}
+
+function openAdobeUploadedFiles(){
+  var a=document.getElementById("pfOriginal"),b=document.getElementById("pfCsv"),c=document.getElementById("pfUploaded");
+  if(!a.checked||!b.checked||!c.checked){
+    var missing=[];
+    if(!a.checked) missing.push("Original filenames confirmed");
+    if(!b.checked) missing.push("CSV Validator = Ready");
+    if(!c.checked) missing.push("Same original files uploaded to Adobe Stock");
+    alert("Before opening Adobe Contributor, confirm:\n\n• "+missing.join("\n• "));
+    return;
+  }
+  window.open("https://contributor.stock.adobe.com/uploads","_blank","noopener");
+}
+function showAdobeCSVSteps(){
+  var el=document.getElementById("adobeCSVSteps");
+  if(el) el.style.display=el.style.display==="none"?"block":"none";
+}
+
+
+/* =========================
+   BULK METADATA CSV IMPORT
+   Supports quoted CSV fields and comma-separated keyword cells.
+========================= */
+function parseCSVRows(text){
+  text=String(text||'').replace(/^\uFEFF/,'');
+  var rows=[],row=[],field='',quoted=false;
+  var first=text.split(/\r?\n/)[0]||'';
+  var delim=(first.split(';').length>first.split(',').length)?';':((first.split('\t').length>first.split(',').length)?'\t':',');
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(quoted){
+      if(ch==='"' && text[i+1]==='"'){field+='"';i++;}
+      else if(ch==='"'){quoted=false;}
+      else field+=ch;
+    }else{
+      if(ch==='"') quoted=true;
+      else if(ch===delim){row.push(field);field='';}
+      else if(ch==='\n'){row.push(field);rows.push(row);row=[];field='';}
+      else if(ch!=='\r') field+=ch;
+    }
+  }
+  if(field.length||row.length){row.push(field);rows.push(row);}
+  return rows.filter(function(r){return r.some(function(v){return String(v).trim()!=='';});});
+}
+function csvHeaderKey(v){return String(v||'').trim().toLowerCase().replace(/[\s_\-]+/g,'').replace(/[^a-z0-9]/g,'');}
+function filenameKey(v){
+  return String(v||'').trim().replace(/\\/g,'/').split('/').pop().replace(/\.[^.]+$/,'').toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+}
+function csvCategoryValue(v){
+  var s=String(v||'').trim();
+  if(!s) return null;
+  if(/^\d+$/.test(s) && categories.some(function(c){return String(c[0])===s;})) return Number(s);
+  var key=csvHeaderKey(s);
+  for(var i=0;i<categories.length;i++) if(csvHeaderKey(categories[i][1])===key) return categories[i][0];
+  return null;
+}
+function importMetadataCSV(file){
+  var status=document.getElementById('csvImportStatus');
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onerror=function(){status.className='csvImportStatus warn';status.textContent='CSV ফাইল পড়া যায়নি। আবার চেষ্টা করো।';};
+  reader.onload=function(){
+    try{
+      var rows=parseCSVRows(reader.result);
+      if(rows.length<2) throw new Error('CSV-তে header-এর পর কোনো metadata row পাওয়া যায়নি।');
+      var headers=rows[0].map(csvHeaderKey);
+      function col(names){for(var i=0;i<names.length;i++){var ix=headers.indexOf(names[i]);if(ix>=0)return ix;}return -1;}
+      var fi=col(['filename','file name','assetname','name']);
+      var ti=col(['title','assettitle']);
+      var ki=col(['keywords','keyword','tags']);
+      var ci=col(['category','adobecategory']);
+      if(ti<0||ki<0) throw new Error('Title ও Keywords কলাম পাওয়া যায়নি। CSV header-এ Filename, Title, Keywords, Category রাখো।');
+      var records=rows.slice(1).map(function(r,index){
+        var kws=String(ki>=0?r[ki]||'':'').split(/[,;|]/).map(function(x){return x.trim();}).filter(Boolean);
+        var seen={}; kws=kws.filter(function(x){var k=x.toLowerCase();if(seen[k])return false;seen[k]=1;return true;});
+        return {rowNo:index+2,filename:fi>=0?String(r[fi]||'').trim():'',title:String(r[ti]||'').trim(),keywords:kws,category:ci>=0?csvCategoryValue(r[ci]):null};
+      }).filter(function(r){return r.title||r.keywords.length;});
+      if(!records.length) throw new Error('কোনো Title বা Keywords পাওয়া যায়নি।');
+      if(!filesData.length) throw new Error('আগে ওয়েবসাইটে সংশ্লিষ্ট JPG/PNG/SVG ফাইলগুলো Upload করো, তারপর Metadata CSV Import করো।');
+      var used={},matched=0,unmatched=[],applied=0,appliedItems=[];
+      /* If no CSV filename matches any uploaded file (e.g. CSV Filename = Title), match by row order automatically. */
+      var nameHits=records.filter(function(r){return r.filename&&filesData.some(function(it){return filenameKey(it.origName||it.name)===filenameKey(r.filename);});}).length;
+      var positional=(nameHits===0&&records.length<=filesData.length);
+      records.forEach(function(rec,idx){
+        var target=null;
+        if(rec.filename){var key=filenameKey(rec.filename);target=filesData.find(function(it){return !used[it.id]&&(filenameKey(it.origName||it.name)===key);});}
+        // Only use order matching if no filename match exists and row/file counts align.
+        if(!target && (positional||records.length===filesData.length)){target=filesData[idx]&&!used[filesData[idx].id]?filesData[idx]:null;}
+        if(!target){unmatched.push(rec.filename||('CSV row '+rec.rowNo));return;}
+        used[target.id]=true;matched++;appliedItems.push(target);
+        if(rec.title) target.title=rec.title.slice(0,RULES.titleMaxLength);
+        if(rec.keywords.length){
+          var normalized=adobeNormalizeMetadata(target.title||rec.title,rec.keywords);
+          target.keywords=normalized.keywords.length?normalized.keywords:rec.keywords.slice(0,RULES.keywordCount);
+        }
+        if(rec.category!==null) target.category=rec.category;
+        target.syncName=true;target.name=exportName(target);target.aiUsed='csv-import';target.state='ready';target.note='';
+        paintCard(target);applied++;
+      });
+      refreshAllNames();scheduleWorkspaceSave();
+      var msg='Import সম্পন্ন: '+applied+'টি record ওয়েবসাইটের ফাইলে বসানো হয়েছে। CSV-তে '+records.length+'টি metadata row পাওয়া গেছে।';
+      if(appliedItems.length) msg+=' নতুন নাম: '+appliedItems.slice(0,3).map(function(it){return (it.origName||'')+' → '+it.name;}).join(' | ')+(appliedItems.length>3?' …':'')+'।';
+      if(positional) msg+=' (Filename মেলেনি, তাই আপলোডের ক্রম অনুযায়ী বসানো হয়েছে।)';
+      if(unmatched.length) msg+=' মেলেনি: '+unmatched.length+'টি ('+unmatched.slice(0,8).join(', ')+(unmatched.length>8?'…':'')+')।';
+      status.className='csvImportStatus '+(unmatched.length?'warn':'ok');status.textContent=msg;
+      banner('📥 Metadata CSV import complete: '+applied+' record(s) applied.',unmatched.length?'run':'ok');
+      var top=document.getElementById('csvImportStatus');if(top)top.scrollIntoView({behavior:'smooth',block:'center'});
+    }catch(err){status.className='csvImportStatus warn';status.textContent='Import হয়নি: '+err.message;}
+  };
+  reader.readAsText(file);
+}
+document.getElementById('metadataCsvInput').addEventListener('change',function(e){
+  var file=e.target.files&&e.target.files[0];
+  if(file) importMetadataCSV(file);
+  e.target.value='';
+});
+
+/* =========================
+   UI
+========================= */
+var nextId=1;
+var batchTotal=0,batchDone=0;
+function banner(text,cls){var b=document.getElementById('banner');if(b){b.className='banner '+(cls||'');b.innerHTML=text;}}
+
+function checkAll(){
+  if(!filesData.length){alert('Upload files first.');return;}
+  filesData.forEach(function(it){checkOne(it.id);});
+}
+
+function analyzeAll(){
+  if(!filesData.length){alert('Upload files first.');return;}
+  if(processing){alert('Analysis is already running.');return;}
+  if(!confirm('Re-analyse all files? Manual edits to Title and Keywords will be replaced.')) return;
+  batchTotal=filesData.length;batchDone=0;
+  filesData.forEach(function(it){it.state='queued';it.stage='Waiting in queue...';paintCard(it);queue.push(it.id);});
+  runQueue();
+}
+
+function catName(n){
+  for(var i=0;i<categories.length;i++) if(String(categories[i][0])===String(n)) return categories[i][1];
+  return "Graphic Resources";
+}
+
+function categoryOptions(sel){
+  return categories.map(function(c){
+    return '<option value="'+c[0]+'"'+(String(c[0])===String(sel)?" selected":"")+'>'+c[1]+"</option>";
+  }).join("");
+}
+
+function cardHTML(item){
+  var prev;
+  if(item.previewEl==="img"){
+    prev='<div class="preview"><img src="'+item.previewUrl+'" alt="Preview"></div>';
+  }else if(item.previewEl==="canvas"){
+    prev='<div class="preview" id="pv'+item.id+'"></div>';
+  }else{
+    prev='<div class="preview"><div class="fileBox"><div class="fileIcon">📄</div><strong>'+escapeHTML(item.type.toUpperCase())+' FILE</strong><br><span>'+escapeHTML(item.name)+'</span><p class="warning">'+escapeHTML(item.previewNote||"Preview not available. Metadata still works.")+'</p></div></div>';
+  }
+  var statusCls=item.state==="ready"?"success":(item.state==="error"?"warning":"");
+  var statusTxt=item.state==="error"?("Preview problem: "+escapeHTML(item.note||"")):(item.title||item.keywords.length?"✓ Metadata ready":"✓ Ready — paste Title and Keywords");
+  var kw=item.keywords.map(function(k,i){return '<span class="keyword'+(i<RULES.priorityCount?" top":"")+'">'+escapeHTML(k)+"</span>";}).join("");
+  return '<div class="cardTop"><span class="serial" id="sn'+item.id+'">#'+(getIndex(item.id)+1)+'</span><span class="badge">'+escapeHTML(item.type.toUpperCase())+'</span><span class="fname" id="fnm'+item.id+'">'+escapeHTML(item.name)+'</span></div>'+
+  prev+
+  '<button class="dlBtn" id="copyImgBtn'+item.id+'" onclick="copyImage('+item.id+')">📋 Copy Image</button>'+
+  '<button class="dlBtn" id="downloadImgBtn'+item.id+'" onclick="downloadImage('+item.id+')">⬇️ Download</button>'+
+  '<button class="simBtn" onclick="checkOne('+item.id+')">🔍 Similarity Check</button>'+
+  '<div class="risk ok" id="risk'+item.id+'"><b>Similarity Risk:</b> tap the button above to check</div>'+
+  '<div class="row"><button class="btn-slate" onclick="reverseSearch('+item.id+',\'tineye\')">🌐 TinEye</button><button class="btn-slate" onclick="reverseSearch('+item.id+',\'google\')">🔎 Google Lens</button></div>'+
+  '<div class="status '+statusCls+'" id="st'+item.id+'">'+statusTxt+'</div>'+
+  '<div class="field"><label>New Filename (from Title)</label><input type="text" id="fn'+item.id+'" value="'+escapeHTML(item.name)+'" readonly oninput="setName('+item.id+',this.value)"><div class="counter" id="fh'+item.id+'">'+'Built from the title. Used for download and in the Adobe CSV. File content stays unchanged.'+'</div></div>'+
+  '<div class="field"><label>Title</label><input type="text" id="ti'+item.id+'" value="'+escapeHTML(item.title)+'" placeholder="Paste title here" oninput="setField('+item.id+',\'title\',this.value)"><div class="counter" id="tc'+item.id+'">'+item.title.length+' / '+RULES.titleMaxLength+'</div></div>'+
+  '<div class="field"><label>Keywords <small>(30 single words)</small></label><textarea id="kw'+item.id+'" placeholder="keyword1, keyword2, keyword3, ... (30 single words)" oninput="updateKeywords('+item.id+',this.value)">'+escapeHTML(item.keywords.join(", "))+'</textarea><div class="counter" id="kc'+item.id+'">'+item.keywords.length+' / '+RULES.keywordCount+'</div><div class="keywords" id="kchips'+item.id+'">'+kw+'</div></div>'+
+  '<div class="field"><label>Adobe Category</label><select onchange="setField('+item.id+',\'category\',this.value)">'+categoryOptions(item.category)+'</select></div>'+
+  '<div class="row"><button onclick="copyOne('+item.id+')">Copy Metadata</button><button class="btn-light" onclick="moveItem('+item.id+',-1)">▲ Up</button><button class="btn-light" onclick="moveItem('+item.id+',1)">▼ Down</button><button class="danger" onclick="removeOne('+item.id+')">Remove</button></div>';
+}
+
+function getItem(id){
+  for(var i=0;i<filesData.length;i++) if(filesData[i].id===id) return filesData[i];
+  return null;
+}
+function getIndex(id){
+  for(var i=0;i<filesData.length;i++) if(filesData[i].id===id) return i;
+  return -1;
+}
+
+function paintCard(item){
+  var host=document.getElementById("card"+item.id);
+  if(!host){
+    host=document.createElement("div");
+    host.className="card";host.id="card"+item.id;
+    document.getElementById("results").appendChild(host);
+  }
+  host.innerHTML=cardHTML(item);
+  if(item.previewEl==="canvas"&&item.canvas){
+    var pv=document.getElementById("pv"+item.id);
+    if(pv){
+      var disp=document.createElement("canvas");
+      disp.width=item.canvas.width;disp.height=item.canvas.height;
+      disp.getContext("2d").drawImage(item.canvas,0,0);
+      pv.appendChild(disp);
+    }
+  }
+}
+
+function setField(id,field,value){
+  var item=getItem(id);if(!item) return;
+  item[field]=value;
+  if(field==="title"){refreshAllNames();}
+  if(field==="title"){
+    var c=document.getElementById("tc"+id);
+    if(c) c.textContent=value.length+" / "+RULES.titleMaxLength;
+  }
+  scheduleWorkspaceSave();
+}
+
+function updateKeywords(id,text){
+  var item=getItem(id);if(!item) return;
+  var arr=text.split(",").map(function(x){return x.trim().toLowerCase();}).filter(Boolean);
+  arr=arr.filter(function(v,i){return arr.indexOf(v)===i;});
+  item.keywords=arr.slice(0,RULES.keywordCount);
+  var c=document.getElementById("kc"+id);
+  if(c){
+    c.textContent=item.keywords.length+" / "+RULES.keywordCount+(arr.length>RULES.keywordCount?" (extra removed on copy)":"");
+  }
+  var chips=document.getElementById("kchips"+id);
+  if(chips){
+    chips.innerHTML=item.keywords.map(function(k,i){return '<span class="keyword'+(i<RULES.priorityCount?" top":"")+'">'+escapeHTML(k)+"</span>";}).join("");
+  }
+  scheduleWorkspaceSave();
+}
+
+function renumber(){
+  filesData.forEach(function(it,i){
+    var el=document.getElementById("sn"+it.id);
+    if(el) el.textContent="#"+(i+1);
+  });
+}
+
+function moveItem(id,dir){
+  var i=getIndex(id),j=i+dir;
+  if(i<0||j<0||j>=filesData.length) return;
+  var tmp=filesData[i];filesData[i]=filesData[j];filesData[j]=tmp;
+  var a=document.getElementById("card"+filesData[j].id);
+  var b=document.getElementById("card"+filesData[i].id);
+  var box=document.getElementById("results");
+  if(a&&b){
+    if(dir<0) box.insertBefore(a,b); else box.insertBefore(b,a);
+  }
+  renumber();
+}
+
+function removeOne(id){
+  var i=getIndex(id);if(i<0) return;
+  filesData.splice(i,1);
+  var el=document.getElementById("card"+id);
+  if(el) el.remove();
+  renumber();
+  renderBatchPanel();
+  runRisk(false);
+  scheduleWorkspaceSave();
+}
+
+function clearAll(){
+  if(!filesData.length) return;
+  if(!confirm("Remove all files?")) return;
+  filesData.length=0;queue.length=0;
+  document.getElementById("results").innerHTML="";
+  clearWorkspaceSave();
+  renderBatchPanel();
+  banner("Upload files. Paste Title and Keywords.");
+}
+
+
+/* =========================
+   BATCH WORKFLOW
+========================= */
+function batchSizeValue(){return Number(document.getElementById("batchSize").value)||10;}
+function batchCount(){return Math.max(1,Math.ceil(filesData.length/batchSizeValue()));}
+function getCurrentBatch(){var size=batchSizeValue();var n=Number(document.getElementById("batchNumber").value)||1;return filesData.slice((n-1)*size,n*size);}
+function renderBatchPanel(){
+  var size=batchSizeValue(), count=batchCount(), sel=document.getElementById("batchNumber"), old=Number(sel.value)||1;
+  sel.innerHTML="";for(var i=1;i<=count;i++){var o=document.createElement("option");o.value=String(i);o.textContent="Batch "+i;sel.appendChild(o);}sel.value=String(Math.min(old,count));
+  var n=Number(sel.value)||1, start=filesData.length?(n-1)*size+1:0, batch=getCurrentBatch();
+  document.getElementById("batchSummary").textContent=filesData.length?"মোট "+filesData.length+"টি ফাইল · "+count+"টি ব্যাচ · Batch "+n+"-এ "+batch.length+"টি ফাইল (ক্রম "+start+"–"+(start+batch.length-1)+")":"প্রথমে ফাইল আপলোড করো।";
+  document.getElementById("batchFileList").innerHTML=batch.length?batch.map(function(item,i){return "<div>"+(start+i)+". "+escapeHTML(item.name)+"</div>";}).join(""):"এখানে ফাইলের নাম দেখাবে।";
+  if(typeof scheduleWorkspaceSave==="function") scheduleWorkspaceSave();
+}
+async function makeBatchContactSheet(batch){
+  if(!batch.length) throw new Error("এই ব্যাচে কোনো ফাইল নেই।");
+  var cols=2, tileW=600, tileH=420, gap=18, pad=24, headerH=52;
+  var rows=Math.ceil(batch.length/cols);
+  var sheet=document.createElement("canvas");
+  sheet.width=pad*2+cols*tileW+gap*(cols-1);
+  sheet.height=pad*2+rows*tileH+gap*(rows-1)+headerH;
+  var ctx=sheet.getContext("2d");
+  ctx.fillStyle="#ffffff";ctx.fillRect(0,0,sheet.width,sheet.height);
+  ctx.fillStyle="#111827";ctx.font="bold 26px Arial, sans-serif";ctx.fillText("Stock Metadata Studio — Batch Preview",pad,pad+28);
+  for(var i=0;i<batch.length;i++){
+    var item=batch[i],c=await getCopyCanvas(item);
+    if(!c) throw new Error("Preview unavailable: "+item.name);
+    var x=pad+(i%cols)*(tileW+gap), y=pad+headerH+Math.floor(i/cols)*(tileH+gap);
+    ctx.fillStyle="#f8fafc";ctx.fillRect(x,y,tileW,tileH);
+    ctx.strokeStyle="#cbd5e1";ctx.lineWidth=2;ctx.strokeRect(x,y,tileW,tileH);
+    ctx.fillStyle="#0f172a";ctx.font="bold 19px Arial, sans-serif";
+    var label=(i+1)+". "+String(item.origName||item.name||("Design "+(i+1)));
+    if(label.length>52) label=label.slice(0,49)+"...";
+    ctx.fillText(label,x+14,y+28);
+    var maxW=tileW-28,maxH=tileH-54,scale=Math.min(maxW/c.width,maxH/c.height);
+    var dw=c.width*scale,dh=c.height*scale;
+    ctx.drawImage(c,x+(tileW-dw)/2,y+40+(maxH-dh)/2,dw,dh);
+  }
+  return sheet;
+}
+async function copyBatchImages(){
+  var batch=getCurrentBatch(),status=document.getElementById("batchStatus"),btn=document.getElementById("copyBatchImagesBtn");
+  if(!batch.length){status.textContent="আগে ফাইল আপলোড করো।";return;}
+  if(btn){btn.disabled=true;btn.textContent="⏳ Batch Preview তৈরি হচ্ছে...";}
+  try{
+    var canvas=await makeBatchContactSheet(batch),blob=await canvasPngBlob(canvas);
+    if(!blob) throw new Error("Batch Preview PNG তৈরি করা যায়নি।");
+    if(!window.isSecureContext||!navigator.clipboard||!window.ClipboardItem||!navigator.clipboard.write) throw new Error("এই ব্রাউজারে image clipboard সমর্থিত নয়।");
+    await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);
+    status.textContent="✅ পুরো ব্যাচের Batch Preview PNG কপি হয়েছে। Google AI Mode-এ Paste করো।";
+    markWorkflowDone(btn);
+  }catch(err){
+    console.error("Contact sheet clipboard error:",err);
+    status.textContent="⚠️ Clipboard-এ কপি করা যায়নি। ‘Batch Preview PNG Download’ চাপো, তারপর Google AI Mode-এ ওই PNG attach করো।";
+  }finally{if(btn){btn.disabled=false;btn.textContent="4. 🖼️ Batch Preview PNG Copy";}}
+}
+async function downloadBatchImages(){
+  var batch=getCurrentBatch(),status=document.getElementById("batchStatus");
+  if(!batch.length){status.textContent="আগে ফাইল আপলোড করো।";return;}
+  try{
+    var canvas=await makeBatchContactSheet(batch),blob=await canvasPngBlob(canvas);
+    if(!blob) throw new Error("PNG export failed");
+    var url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="Stock_Metadata_Batch_"+(Number(document.getElementById("batchNumber").value)||1)+"_Batch_Preview.png";
+    document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},10000);
+    status.textContent="⬇️ Batch Preview PNG Download শুরু হয়েছে। এই এক ছবিতে ব্যাচের "+batch.length+"টি প্রিভিউ ও ফাইলের নাম আছে। Google AI Mode-এ PNG-টি attach করো।";
+    markWorkflowDone(document.getElementById("workflowDownloadPreview"));
+  }catch(e){status.textContent="⚠️ Contact Sheet তৈরি হয়নি: "+(e.message||e);}
+}
+function batchPromptText(){var batch=getCurrentBatch();var n=Number(document.getElementById("batchNumber").value)||1;return "Analyze every attached stock design preview individually. This is Batch "+String(n).padStart(2,"0")+". Process every attached image in attachment order and return exactly one row per image. Preserve the exact filename when available; otherwise use these filenames in this order:\n"+batch.map(function(item){return item.name;}).join("\n")+"\nCreate accurate concise English Adobe Stock titles, relevant keywords ordered by importance, and the best category. Do not invent details. Return valid CSV only with columns Filename,Title,Keywords,Category. Quote each keyword-list CSV field correctly; separate keywords with commas. Check that output row count equals attached image count.";}
+var MASTER_METADATA_PROMPT = `Metadeta CSV create Prompt
+
+I am working as an Adobe Stock Contributor specializing in vector (SVG) designs. For this entire batch of work, you must strictly adhere to the following rules:
+
+1. Project Initialization: We will first provide you with a metadata Excel/CSV sheet. You will analyze the file names and determine the total number of designs to set up the sequence/order.
+2. Sequence Continuity & Visual Analysis: Once you receive the file and confirm, we will start sending screenshots containing previews of 10 to 20 vectors at a time in chronological order. You will analyze every vector individually. If any duplicate or identical design is repeated across screenshots, you must immediately alert us about the match in the Bengali language.
+3. Category Selection Rules: For each design, analyze the content and assign the most appropriate category name from the official Adobe Stock list below. If the visual content does not clearly fit any specific category, default strictly to "Graphic Resources".
+* Official Categories List:
+  1. Animals
+  2. Buildings and Architecture
+  3. Business
+  4. Drinks
+  5. The Environment
+  6. States of Mind
+  7. Food
+  8. Graphic Resources
+  9. Hobbies and Leisure
+  10. Industry
+  11. Landscapes
+  12. Lifestyle
+  13. People
+  14. Plants and Flowers
+  15. Culture and Religion
+  16. Science
+  17. Social Issues
+  18. Sports
+  19. Technology
+  20. Transport
+  21. Travel
+4. Title Requirements: For each file, you will generate an SEO-friendly title that must be between 15 to 25 words long. This must be provided in a completely separate, easy-to-copy code box.
+* Example Title Format: 18 Plus Age Restriction Icon Set with Prohibited Adult Content Symbols for Websites, Apps, Warning Labels, and Digital Media Designs
+5. Keyword Requirements: For each file, you will provide exactly 30 single keywords. Do not serialize or number them (like 1, 2, 3). The keywords must be aligned horizontally from left to right, and each keyword must end with a comma (,). This must also be provided in a completely separate, easy-to-copy code box.
+* Example Keywords Format: 18plus, adult, warning, restriction, age, limit, prohibited, forbidden, icon, symbol, sign, caution, mature, content, only, access, control, policy, safety, regulation, website, app, media, label, badge, vector, graphic, design, alert, notice,
+6. Completion Alert: Once all the serial numbers/files from the provided metadata sheet are completed, you must proactively remind us in the chat that all files have been processed.
+7. Final Delivery: After all the images are processed, you will generate and deliver a final, ready-to-upload metadata sheet (.csv file) containing the compiled data for all specified files as a downloadable file link.
+
+Do you fully understand the entire process, examples, specific categories, and all the rules? If you are ready, let us know, and we will share the metadata sheet first.`;
+function markWorkflowDone(btn){
+  if(!btn)return;
+  if(btn._doneResetTimer)clearTimeout(btn._doneResetTimer);
+  var labels={workflowPreviewCsv:"1. Preview CSV",workflowDownloadCsv:"2. Adobe CSV Download",workflowCopyPrompt:"3. CSV create Prompt Copy",copyBatchImagesBtn:"4. 🖼️ Batch Preview PNG Copy",workflowDownloadPreview:"5. ⬇️ Batch Preview PNG Download",workflowOpenAdobe:"6. 🚀 Open Adobe Uploaded Files"};
+  var original=labels[btn.id]||btn.textContent.replace(/^✓\s*/,"");
+  btn.classList.add('done');btn.textContent='✓ '+original;
+  btn._doneResetTimer=setTimeout(function(){btn.classList.remove('done');btn.textContent=original;btn._doneResetTimer=null;},1600);
+}
+function workflowAction(btn,fn){try{fn();markWorkflowDone(btn);}catch(e){console.error(e);}}
+async function copyMasterPrompt(btn){try{await navigator.clipboard.writeText(MASTER_METADATA_PROMPT);document.getElementById('batchStatus').textContent='✅ সম্পূর্ণ Master Prompt কপি হয়েছে।';markWorkflowDone(btn);}catch(e){var a=document.createElement('textarea');a.value=MASTER_METADATA_PROMPT;document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy');}catch(x){}a.remove();document.getElementById('batchStatus').textContent=ok?'✅ সম্পূর্ণ Master Prompt কপি হয়েছে।':'⚠️ কপি করা যায়নি।';if(ok)markWorkflowDone(btn);}}
+function downloadBatchLists(){if(!filesData.length){document.getElementById("batchStatus").textContent="আগে ফাইল আপলোড করো।";return;}var size=batchSizeValue(),out=["Stock Metadata Studio — Batch Lists","Total files: "+filesData.length,"Batch size: "+size,""];for(var i=0;i<filesData.length;i+=size){out.push("BATCH "+(Math.floor(i/size)+1));filesData.slice(i,i+size).forEach(function(item,j){out.push((i+j+1)+". "+item.name);});out.push("");}var blob=new Blob([out.join("\n")],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="Stock_Metadata_Batch_Lists.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);}
+
+/* =========================
+   PROCESSING QUEUE
+========================= */
+renderBatchPanel();
+document.getElementById("fileInput").addEventListener("change",function(e){
+  // Snapshot the FileList immediately: some mobile file providers reuse/clear it after the picker closes.
+  var input=e.target;
+  var list=Array.from(input.files || []);
+  var added=0, failed=[];
+  if(!list.length){
+    banner("কোনো ফাইল পাওয়া যায়নি। Chrome-এ Files থেকে আবার একাধিক ফাইল সিলেক্ট করো।","warn");
+    input.value="";
+    return;
+  }
+  list.forEach(function(file){
+    try{
+      if(!file || !file.name) { failed.push("নামহীন ফাইল"); return; }
+      var ext=file.name.split(".").pop().toLowerCase();
+      var type=ext==="jpeg"?"jpg":ext;
+      var item={
+        id:nextId++,file:file,name:file.name,origName:file.name,sourceFilename:file.name,ext:ext,syncName:false,type:type,
+        title:"",keywords:[],category:8,state:"ready",stage:"",previewEl:null,previewUrl:null,canvas:null,aiUsed:false
+      };
+      if(type==="jpg"||type==="png"||type==="svg"){
+        item.previewEl="img";
+        item.previewUrl=URL.createObjectURL(file);
+      }else{
+        item.previewEl=null;
+        item.previewNote=(type==="eps")?"Creating EPS preview...":"Preview available after AI Analyze.";
+      }
+      filesData.push(item);
+      if(type==="eps") setTimeout(function(){autoEpsPreview(item);},0);
+      try { paintCard(item); }
+      catch(renderErr) {
+        // Keep processing the remaining selected files even if one card fails to render.
+        console.error("Could not render file card:", file.name, renderErr);
+        failed.push(file.name+" (card render failed)");
+      }
+      added++;
+    }catch(fileErr){
+      console.error("Could not add selected file:", file && file.name, fileErr);
+      failed.push((file && file.name ? file.name : "Unknown file")+" (upload failed)");
+    }
+  });
+  input.value="";
+  renumber();
+  renderBatchPanel();
+  scheduleWorkspaceSave();
+  runRisk(false);
+  var message=added+" of "+list.length+" selected file(s) added. Total: "+filesData.length+".";
+  if(failed.length) message+=" Failed: "+failed.join(", ");
+  banner(message,failed.length?"warn":"ok");
+});
+
+var renderChain=Promise.resolve();
+function withRenderLock(fn){
+  var run=renderChain.then(fn,fn);
+  renderChain=run.catch(function(){});
+  return run;
+}
+async function worker(){
+  while(queue.length){
+    var id=queue.shift();
+    var item=getItem(id);
+    if(!item) continue;
+    try{await processItem(item);}
+    catch(err){
+      item.state="error";item.note=err.message;
+      var m=buildMetadata(item.name,item.type,[]);
+      item.title=m.title;item.keywords=m.keywords;item.syncName=false;item.name=item.origName;
+      paintCard(item);
+    }
+    batchDone++;
+    banner('🤖 Analysing '+batchDone+' / '+batchTotal+' ...','run');
+    await sleep(60);
+  }
+}
+async function runQueue(){
+  if(processing) return;
+  processing=true;
+  banner('🤖 Analysing '+batchDone+' / '+batchTotal+' ...','run');
+  var n=gemKey()?3:1;
+  var ws=[];
+  for(var i=0;i<n;i++) ws.push(worker());
+  await Promise.all(ws);
+  processing=false;
+  runRisk(false);
+  banner('✅ Analysis complete. '+batchDone+' file(s) ready.','ok');
+}
+
+function stage(item,text){
+  item.stage=text;
+  var el=document.getElementById("st"+item.id);
+  if(el) el.textContent="⏳ "+text;
+}
+
+async function processItem(item){
+  var canvasForAI=null;
+  stage(item,"Reading file...");
+
+  if(item.type==="jpg"||item.type==="png"){
+    item.previewEl="img";
+    item.previewUrl=URL.createObjectURL(item.file);
+    paintCard(item);
+    stage(item,"Preparing image...");
+    canvasForAI=await imgToCanvas(item.previewUrl);
+  }
+  else if(item.type==="svg"){
+    item.previewEl="img";
+    item.previewUrl=await svgToUrl(item.file);
+    paintCard(item);
+    stage(item,"Preparing image...");
+    canvasForAI=await imgToCanvas(item.previewUrl);
+  }
+  else if(item.type==="ai"){
+    stage(item,"Rendering AI artwork preview...");
+    try{
+      var c=await withRenderLock(function(){return renderAI(item.file);});
+      item.canvas=c;item.previewEl="canvas";canvasForAI=c;
+    }catch(e){
+      item.previewEl=null;
+      item.previewNote="AI preview failed ("+e.message+"). Re-save the AI file with PDF Compatibility turned on to get a preview. Metadata still works from the file name.";
+    }
+    paintCard(item);
+  }
+  else if(item.type==="eps"){
+    stage(item,"Looking for EPS preview...");
+    try{
+      var r=item.canvas||await withRenderLock(function(){return renderEPS(item.file,item);});
+      item.canvas=r;item.previewEl="canvas";canvasForAI=r;
+    }catch(e){
+      item.previewEl=null;
+      item.previewNote="EPS preview failed ("+e.message+"). Metadata still works from the file name. Check your internet connection or export a PNG/JPG preview.";
+    }
+    paintCard(item);
+  }
+  else{
+    item.previewNote="Unsupported file type.";
+    paintCard(item);
+  }
+
+  if(canvasForAI){
+    try{item.hash=dHash(canvasForAI,false);item.hashFlip=dHash(canvasForAI,true);}catch(e){}
+  }
+  var labels=[];
+  var gem=null;
+  item.gemErr="";
+  if(canvasForAI&&gemKey()){
+    stage(item,"Gemini is analysing the artwork...");
+    try{gem=await geminiAnalyze(canvasForAI,item);}
+    catch(e){item.gemErr=(e&&e.message)||"Gemini failed";}
+  }
+  if(!gem&&canvasForAI){
+    stage(item,"AI is analysing the artwork...");
+    labels=await classify(canvasForAI);
+  }
+  item.aiUsed=gem?"gemini":(labels.length>0);
+  stage(item,"Building title and keywords...");
+  var meta=buildMetadata(item.name,item.type,labels);
+  if(gem){
+    var kws=[];
+    (gem.keywords||[]).forEach(function(w){
+      if(kws.length<RULES.keywordCount) addUnique(kws,w);
+    });
+    var gemNorm=adobeNormalizeMetadata(gem.title,kws);
+    meta.title=gemNorm.title;
+    meta.keywords=gemNorm.keywords;
+    item.category=gem.category;
+  }
+  item.title=meta.title;
+  item.keywords=meta.keywords;
+  item.syncName=true;
+  item.name=exportName(item);
+  item.state="ready";
+  saveHistory(item);
+  paintCard(item);
+}
+
+/* =========================
+   COPY / EXPORT
+========================= */
+function clipboardWrite(text,okMsg){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){alert(okMsg);},function(){prompt("Copy metadata:",text);});
+  }else{
+    prompt("Copy metadata:",text);
+  }
+}
+function copyOne(id){
+  var item=getItem(id);if(!item) return;
+  clipboardWrite("Title: "+item.title+"\n\nKeywords: "+item.keywords.join(", "),"Metadata copied!");
+}
+function copyAll(){
+  if(!filesData.length){alert("Upload files first.");return;}
+  var out="";
+  filesData.forEach(function(item,n){
+    out+="No: "+(n+1)+"\nFilename: "+item.name+"\nTitle: "+item.title+"\nKeywords: "+item.keywords.join(", ")+"\n\n";
+  });
+  clipboardWrite(out,"All metadata copied!");
+}
+
+function buildAdobeCSVText(){
+  var csv="Filename,Title,Keywords,Category,Releases\n";
+  filesData.forEach(function(item){
+    var row=[exportName(item),item.title,item.keywords.join(", "),catName(item.category),""].map(function(v){
+      return '"'+String(v).replace(/"/g,'""')+'"';
+    }).join(",");
+    csv+=row+"\n";
+  });
+  return csv;
+}
+
+function validateAdobeCSV(showUI){
+  var errors=[], warnings=[], checked=0;
+  if(!filesData.length){
+    errors.push("কোনো file upload করা হয়নি।");
+  }
+
+  var seen={};
+  filesData.forEach(function(item,idx){
+    checked++;
+    var fn=String(exportName(item)||"").trim();
+    var title=String(item.title||"").trim();
+    var kws=Array.isArray(item.keywords)?item.keywords.filter(function(k){return String(k).trim();}):[];
+
+    if(!fn) errors.push("#"+(idx+1)+": Original filename নেই।");
+    if(fn.length>30) errors.push("#"+(idx+1)+" "+fn+": filename "+fn.length+" characters — 30-এর বেশি।");
+    if(fn.length>0){
+      var key=fn.toLowerCase();
+      if(seen[key]) errors.push("#"+(idx+1)+" "+fn+": duplicate filename — "+seen[key]+" নম্বর file-এর সঙ্গে মিলে গেছে।");
+      else seen[key]=idx+1;
+    }
+
+    if(!title) errors.push("#"+(idx+1)+" "+(fn||"file")+": Title খালি।");
+    if(title.length>RULES.titleMaxLength) errors.push("#"+(idx+1)+" "+fn+": Title "+title.length+" characters — "+RULES.titleMaxLength+"-এর বেশি।");
+    var titleWordCount=title?title.split(/\s+/).filter(Boolean).length:0;
+    if(title && titleWordCount<RULES.titleMinWords) errors.push("#"+(idx+1)+" "+fn+": Title-এ "+titleWordCount+"টি word আছে — কমপক্ষে "+RULES.titleMinWords+"টি দরকার।");
+    if(title && titleWordCount>RULES.titleMaxWords) errors.push("#"+(idx+1)+" "+fn+": Title-এ "+titleWordCount+"টি word আছে — সর্বোচ্চ "+RULES.titleMaxWords+"টি।");
+    if(title && /[^A-Za-z0-9 ]/.test(title)) errors.push("#"+(idx+1)+" "+fn+": Title-এ শুধু letters numbers এবং spaces থাকতে হবে।");
+
+    if(kws.length!==RULES.keywordCount) errors.push("#"+(idx+1)+" "+fn+": "+kws.length+" keywords আছে — ঠিক "+RULES.keywordCount+"টি single-word keyword দরকার।");
+    if(kws.some(function(k){return /\s/.test(String(k).trim());})) errors.push("#"+(idx+1)+" "+fn+": সব keyword single word হতে হবে; phrase পাওয়া গেছে।");
+    if(kws.length===0) errors.push("#"+(idx+1)+" "+fn+": Keywords খালি।");
+
+    var lower={};
+    kws.forEach(function(k){
+      var v=String(k).trim().toLowerCase();
+      if(lower[v]) warnings.push("#"+(idx+1)+" "+fn+": duplicate keyword '"+String(k).trim()+"'.");
+      lower[v]=true;
+    });
+
+    if(kws.length>0 && kws.length<10) warnings.push("#"+(idx+1)+" "+fn+": মাত্র "+kws.length+" keywords আছে; আপনার workflow-এর প্রথম 10 priority keywords সম্পূর্ণ হয়নি।");
+    if(kws.slice(0,10).some(function(k){return !String(k).trim();})) warnings.push("#"+(idx+1)+" "+fn+": প্রথম 10 keyword-এর মধ্যে খালি keyword আছে।");
+  });
+
+  var csv=buildAdobeCSVText();
+  var bytes=new Blob([csv]).size;
+  if(bytes>1024*1024) errors.push("CSV size "+(bytes/1024/1024).toFixed(2)+" MB — 1 MB-এর বেশি।");
+
+  var ok=errors.length===0;
+  if(showUI){
+    var sum=document.getElementById("validatorSummary");
+    var det=document.getElementById("validatorDetails");
+    var readyBox=document.getElementById("adobeCsvReady");
+    if(readyBox){ readyBox.className="adobeReady"+(ok?" show":""); }
+    if(sum){
+      sum.className="validatorSummary "+(ok?"validatorGood":"validatorBad");
+      sum.innerHTML=ok
+        ? "✅ <b>CSV Ready:</b> "+checked+"টি file validation pass করেছে। Adobe CSV download করা যাবে।"
+        : "❌ <b>CSV Ready নয়:</b> "+errors.length+"টি error ঠিক করতে হবে"+(warnings.length?" এবং "+warnings.length+"টি warning আছে।":"");
+    }
+    if(det){
+      var h="";
+      if(errors.length) h+='<div class="validatorBad"><b>Errors</b><ul class="validatorList">'+errors.map(function(e){return "<li>"+escapeHTML(e)+"</li>";}).join("")+"</ul></div>";
+      if(warnings.length) h+='<div class="validatorWarn"><b>Warnings</b><ul class="validatorList">'+warnings.map(function(e){return "<li>"+escapeHTML(e)+"</li>";}).join("")+"</ul></div>";
+      if(ok&&!warnings.length) h='<div class="validatorGood" style="margin-top:10px">🎉 কোনো error বা warning পাওয়া যায়নি।</div>';
+      det.innerHTML=h;
+    }
+  }
+  return {ok:ok,errors:errors,warnings:warnings,bytes:bytes};
+}
+
+function downloadCSV(){
+  if(!filesData.length){alert("Upload files first.");return;}
+
+  /* Validate and show the report, but NEVER block the CSV download. */
+  var check=validateAdobeCSV(true);
+  var csv=buildAdobeCSVText();
+  var blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  var a=document.createElement("a");
+  var url=URL.createObjectURL(blob);
+  a.href=url;
+  a.download="Adobe_Stock_Metadata.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+
+  var csvButtons=document.querySelectorAll('button[onclick="downloadCSV()"],#adobeCsvDownloadBtn');
+  csvButtons.forEach(function(btn){
+    var original=btn.id==="adobeCsvDownloadBtn"?"⬇️ Adobe CSV Download":"💾 Adobe CSV";
+    btn.textContent="✅ CSV Downloaded";
+    btn.classList.add("copied");
+    clearTimeout(btn._csvDownloadedTimer);
+    btn._csvDownloadedTimer=setTimeout(function(){btn.textContent=original;btn.classList.remove("copied");},2200);
+  });
+  if(check.ok){
+    banner("✅ Adobe CSV downloaded successfully.","ok");
+  }else{
+    banner("⬇️ Adobe CSV downloaded successfully. Validator-এ "+check.errors.length+"টি issue দেখানো হয়েছে—প্রয়োজনে ঠিক করে আবার download করুন.","warning");
+  }
+}
+gemUI();
+updateGoogleAISelectedFile();
+
+
+function getSelectedMetadataItem(){
+  return filesData.length ? filesData[filesData.length-1] : null;
+}
+function updateGoogleAISelectedFile(){}
+function extractAIMetadata(){
+  var raw=(document.getElementById("aiPasteBox")||{}).value||"";
+  var st=document.getElementById("aiPasteStatus");
+  var item=getSelectedMetadataItem();
+  if(!raw.trim()){st.className="aiPasteStatus warn";st.textContent="Paste the Google AI result first.";return;}
+  if(!item){st.className="aiPasteStatus warn";st.textContent="Upload a file first.";return;}
+  var titleMatch=raw.match(/(?:^|\n)\s*TITLE\s*[:\-]\s*(.+?)(?=\n\s*KEYWORDS\s*[:\-]|$)/is);
+  var kwMatch=raw.match(/(?:^|\n)\s*KEYWORDS\s*[:\-]\s*([\s\S]*)/i);
+  var title=titleMatch?titleMatch[1].trim():"";
+  var kwText=kwMatch?kwMatch[1].trim():"";
+  var keywords=kwText.replace(/```[a-z]*|```/gi,"").replace(/\r?\n/g," ").split(/[,;|]/).map(function(k){return k.replace(/^[-*\d.\s]+/,"").trim();}).filter(Boolean);
+  var seen={};
+  keywords=keywords.filter(function(k){var key=k.toLowerCase();if(seen[key])return false;seen[key]=1;return true;});
+  if(title || keywords.length){
+    var normalized=adobeNormalizeMetadata(title || item.title, keywords);
+    if(title) item.title=normalized.title;
+    if(keywords.length) item.keywords=normalized.keywords;
+  }
+  item.aiUsed="google-ai-mode";
+  paintCard(item);
+  st.className=keywords.length>=RULES.keywordCount?"aiPasteStatus ok":"aiPasteStatus warn";
+  st.textContent=(title?"Title applied. ":"Title not found. ")+(keywords.length?keywords.length+" keywords applied.":"Keywords not found.");
+}
+function clearAIPaste(){
+  var box=document.getElementById("aiPasteBox"); if(box) box.value="";
+  var st=document.getElementById("aiPasteStatus"); if(st){st.className="aiPasteStatus";st.textContent="Paste Google AI result here.";}
+}
+
+/* =========================
+   AUTO SAVE / RESTORE WORKSPACE
+   Keeps uploaded files + metadata across background-tab reloads when browser storage permits.
+========================= */
+var workspaceDB=null,workspaceSaveTimer=null,workspaceRestoring=false;
+function openWorkspaceDB(){
+  return new Promise(function(resolve,reject){
+    if(!window.indexedDB){reject(new Error("IndexedDB unavailable"));return;}
+    var req=indexedDB.open("StockMetadataStudioDB",1);
+    req.onupgradeneeded=function(e){
+      var db=e.target.result;
+      if(!db.objectStoreNames.contains("workspace")) db.createObjectStore("workspace",{keyPath:"key"});
+    };
+    req.onsuccess=function(e){workspaceDB=e.target.result;resolve(workspaceDB);};
+    req.onerror=function(){reject(req.error||new Error("IndexedDB error"));};
+  });
+}
+function workspaceSnapshot(){
+  return {
+    key:"current",
+    savedAt:Date.now(),
+    nextId:nextId,
+    batchSize:document.getElementById("batchSize") ? document.getElementById("batchSize").value : "10",
+    batchNumber:document.getElementById("batchNumber") ? document.getElementById("batchNumber").value : "1",
+    items:filesData.map(function(item){
+      return {
+        id:item.id,
+        name:item.origName||item.name,
+        origName:item.origName||item.name,
+        sourceFilename:item.sourceFilename||item.origName||item.name,
+        ext:item.ext,
+        type:item.type,
+        title:item.title||"",
+        keywords:Array.isArray(item.keywords)?item.keywords.slice(0,RULES.keywordCount):[],
+        category:item.category,
+        syncName:item.syncName!==false,
+        aiUsed:item.aiUsed||false,
+        state:item.state||"ready",
+        note:item.note||""
+      ,file:item.file||null};
+    })
+  };
+}
+function saveWorkspaceNow(){
+  if(workspaceRestoring) return;
+  if(!workspaceDB){
+    openWorkspaceDB().then(saveWorkspaceNow).catch(function(){});
+    return;
+  }
+  try{
+    var tx=workspaceDB.transaction("workspace","readwrite");
+    tx.objectStore("workspace").put(workspaceSnapshot());
+  }catch(e){}
+}
+function scheduleWorkspaceSave(){
+  if(workspaceRestoring) return;
+  clearTimeout(workspaceSaveTimer);
+  workspaceSaveTimer=setTimeout(saveWorkspaceNow,450);
+}
+function clearWorkspaceSave(){
+  clearTimeout(workspaceSaveTimer);
+  if(!workspaceDB) return;
+  try{workspaceDB.transaction("workspace","readwrite").objectStore("workspace").delete("current");}catch(e){}
+}
+async function restoreWorkspace(){
+  try{
+    await openWorkspaceDB();
+    var rec=await new Promise(function(resolve,reject){
+      var req=workspaceDB.transaction("workspace","readonly").objectStore("workspace").get("current");
+      req.onsuccess=function(){resolve(req.result||null);};
+      req.onerror=function(){reject(req.error);};
+    });
+    if(!rec||!Array.isArray(rec.items)||!rec.items.length) return;
+    workspaceRestoring=true;
+    var bs=document.getElementById("batchSize");
+    if(bs && rec.batchSize && Array.from(bs.options).some(function(o){return o.value===String(rec.batchSize);})) bs.value=String(rec.batchSize);
+    filesData.length=0;
+    var maxId=0;
+    rec.items.forEach(function(r){
+      if(!r.file) return;
+      var f;
+      try{f=new File([r.file],r.origName||r.name,{type:r.file.type||"",lastModified:r.file.lastModified||Date.now()});}
+      catch(e){f=r.file;}
+      var item={
+        id:r.id,file:f,name:r.origName||r.name,origName:r.origName||r.name,sourceFilename:r.sourceFilename||r.origName||r.name,
+        ext:r.ext,type:r.type,title:r.title||"",keywords:Array.isArray(r.keywords)?r.keywords.slice(0,RULES.keywordCount):[],
+        category:r.category==null?8:r.category,syncName:r.syncName!==false,state:"ready",stage:"",previewEl:null,previewUrl:null,canvas:null,aiUsed:r.aiUsed||false,note:r.note||""
+      };
+      if(item.type==="jpg"||item.type==="png"||item.type==="svg"){
+        item.previewEl="img";
+        item.previewUrl=URL.createObjectURL(item.file);
+      }else{
+        item.previewNote="Preview available after AI Analyze.";
+      }
+      filesData.push(item);
+      if(item.id>maxId) maxId=item.id;
+    });
+    nextId=Math.max(Number(rec.nextId)||1,maxId+1);
+    renderBatchPanel();
+    var bn=document.getElementById("batchNumber");
+    if(bn && rec.batchNumber && Array.from(bn.options).some(function(o){return o.value===String(rec.batchNumber);})) bn.value=String(rec.batchNumber);
+    renderBatchPanel();
+    filesData.forEach(function(item){item.name=exportName(item);paintCard(item);if(item.type==="eps"&&!item.canvas)autoEpsPreview(item);});
+    if(filesData.length){
+      banner("↩️ Previous workspace restored automatically. "+filesData.length+" file(s) recovered.","ok");
+    }
+  }catch(e){
+    console.warn("Workspace restore failed",e);
+  }finally{
+    workspaceRestoring=false;
+  }
+}
+
+/* Save whenever a card is rendered; writes are debounced. */
+var _originalPaintCard=paintCard;
+paintCard=function(item){_originalPaintCard(item);scheduleWorkspaceSave();};
+
+/* Floating Up / Down controls */
+function scrollPageTop(){window.scrollTo({top:0,behavior:"smooth"});}
+function scrollPageHome(){
+  var home=document.querySelector(".header");
+  if(home) home.scrollIntoView({behavior:"smooth",block:"start"});
+  else scrollPageTop();
+}
+function scrollPageBottom(){window.scrollTo({top:document.documentElement.scrollHeight,behavior:"smooth"});}
+function updateScrollControls(){
+  var el=document.getElementById("scrollControls");
+  if(!el) return;
+  el.classList.toggle("show",window.scrollY>180);
+}
+window.addEventListener("scroll",updateScrollControls,{passive:true});
+window.addEventListener("load",function(){updateScrollControls();restoreWorkspace();});
+window.addEventListener("beforeunload",saveWorkspaceNow);
+
+</script>
+</body>
+</html>
